@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&display=swap');
+
+:root {
+  --bg: #f5f6f8;
+  --panel: #ffffff;
+  --panel-2: #fafbfc;
+  --border: #e8eaef;
+  --border-strong: #dde0e7;
+  --text: #0c1322;
+  --text-2: #5a6473;
+  --text-3: #9aa3b2;
+  --ink: #0c1322;
+  --ink-fg: #ffffff;
+  --accent: #4f46e5;
+  --accent-2: #7c3aed;
+  --accent-soft: #eef0fe;
+  --shadow: rgba(13, 18, 38, 0.05);
+  --shadow-lg: rgba(13, 18, 38, 0.10);
+}
+
+[data-theme="dark"] {
+  --bg: #07080c;
+  --panel: #101218;
+  --panel-2: #15171f;
+  --border: #21242e;
+  --border-strong: #2b2f3a;
+  --text: #eef1f6;
+  --text-2: #98a2b3;
+  --text-3: #5e6878;
+  --ink: #eef1f6;
+  --ink-fg: #0c1322;
+  --accent: #8b7dff;
+  --accent-2: #b69bff;
+  --accent-soft: #181a2c;
+  --shadow: rgba(0, 0, 0, 0.45);
+  --shadow-lg: rgba(0, 0, 0, 0.6);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background: var(--bg);
+  color: var(--text);
+}
+
+input::placeholder {
+  color: var(--text-3);
+}
+
+textarea::placeholder {
+  color: var(--text-3);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes scoreDraw {
+  from { stroke-dashoffset: 440; }
+  to { stroke-dashoffset: 96.8; }
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes drawerIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes floatUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.page-in {
+  animation: pageIn 0.35s ease forwards;
+}
+
+.drawer-in {
+  animation: drawerIn 0.34s cubic-bezier(0.34, 0.85, 0.4, 1) forwards;
+}
+
+.overlay-in {
+  animation: overlayIn 0.25s ease forwards;
+}
+
+.float-up {
+  animation: floatUp 0.3s ease forwards;
+}
+
+.blink {
+  animation: blink 1.8s infinite;
+}
+
+.toast-in {
+  animation: toastIn 0.28s ease forwards;
+}
+
+.score-draw {
+  animation: scoreDraw 1.5s cubic-bezier(0.34, 0.85, 0.4, 1) 0.15s forwards;
+}
