@@ -51,7 +51,7 @@ export function MediaMonitor() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       <AgentBanner />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+      <div className="r-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
         {stats.map(s => (
           <div key={s.label} style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '14px', boxShadow: '0 1px 2px var(--shadow)', padding: '15px 17px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '9px' }}>
@@ -63,7 +63,7 @@ export function MediaMonitor() {
         ))}
       </div>
 
-      <section style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '18px' }}>
+      <section className="r-2col" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '18px' }}>
         <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: '0 1px 2px var(--shadow)', padding: '20px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
             <div style={{ fontSize: '14px', fontWeight: 600 }}>Sentiment, last 14 days</div>

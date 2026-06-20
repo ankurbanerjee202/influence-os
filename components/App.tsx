@@ -7,6 +7,7 @@ import { Sidebar } from './Sidebar'
 import { TopBar } from './TopBar'
 import { AgentHub } from './AgentHub'
 import { ChatDrawer } from './ChatDrawer'
+import { MobileNav } from './MobileNav'
 import { Dashboard } from './pages/Dashboard'
 import { BrandStrategy } from './pages/BrandStrategy'
 import { PRCenter } from './pages/PRCenter'
@@ -185,6 +186,7 @@ export function App() {
   return (
     <AppContext.Provider value={ctx}>
       <div
+        className="app-wrapper"
         data-theme={state.theme}
         style={{
           display: 'grid',
@@ -201,6 +203,7 @@ export function App() {
         <Sidebar />
         <TopBar />
         <main
+          className="app-main"
           style={{
             gridArea: 'main',
             overflowY: 'auto',
@@ -212,6 +215,7 @@ export function App() {
           </div>
         </main>
         <AgentHub />
+        <MobileNav />
         {state.drawerAgentId && <ChatDrawer />}
         {state.toast && (
           <div

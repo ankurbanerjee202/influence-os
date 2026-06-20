@@ -23,7 +23,7 @@ export function AgentMarketplace() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <div className="r-agents" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
         {AGENTS.map(agent => {
           const tone = TONE_STYLES[agent.statusTone]
           const isDeployed = deployed[agent.id]
@@ -78,7 +78,7 @@ export function AgentMarketplace() {
         })}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '4px' }}>
+      <div className="r-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '4px' }}>
         <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: '0 1px 2px var(--shadow)', padding: '20px 22px' }}>
           <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px' }}>How agents collaborate</div>
           <div style={{ fontSize: '11.5px', color: 'var(--text-3)', marginBottom: '14px' }}>Every agent shares brand context — strategy flows into PR, content and insight.</div>

@@ -147,7 +147,7 @@ export function AgentHub() {
     : 'Your autonomous PR & brand team. Tap any agent to collaborate.'
 
   return (
-    <aside style={{
+    <aside className="app-rail" style={{
       gridArea: 'rail',
       background: 'var(--panel)',
       borderLeft: '1px solid var(--border)',

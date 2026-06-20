@@ -61,7 +61,7 @@ export function ContentStudio() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       <AgentBanner agentId="aura" name="AURA + IVY" tagline="Thought leadership in your voice, repurposed & scheduled automatically." />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+      <div className="r-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
         {stats.map(s => (
           <div key={s.label} style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '14px', boxShadow: '0 1px 2px var(--shadow)', padding: '15px 17px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '9px' }}>
@@ -82,7 +82,7 @@ export function ContentStudio() {
           </div>
           <button onClick={() => openDrawer('aura')} style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', height: '36px', padding: '0 14px', border: 'none', borderRadius: '9px', background: 'var(--ink)', color: 'var(--ink-fg)', fontFamily: 'inherit', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer' }}>Generate week with AURA</button>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
+        <div className="r-calendar" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
           {calendar.map(d => (
             <div key={d.day} style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
               <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', paddingLeft: '2px' }}>{d.day}</div>
@@ -100,7 +100,7 @@ export function ContentStudio() {
         </div>
       </div>
 
-      <section style={{ display: 'grid', gridTemplateColumns: '1fr 1.1fr', gap: '18px' }}>
+      <section className="r-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1.1fr', gap: '18px' }}>
         <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: '0 1px 2px var(--shadow)', padding: '20px 22px' }}>
           <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px' }}>Thought leadership pillars</div>
           <div style={{ fontSize: '11.5px', color: 'var(--text-3)', marginBottom: '12px' }}>Your authority is built on these themes — by AURA</div>

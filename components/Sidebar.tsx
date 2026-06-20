@@ -88,7 +88,7 @@ export function Sidebar() {
   const activeCount = Object.values(deployed).filter(Boolean).length
 
   return (
-    <aside style={{
+    <aside className="app-side" style={{
       gridArea: 'side',
       background: 'var(--panel)',
       borderRight: '1px solid var(--border)',

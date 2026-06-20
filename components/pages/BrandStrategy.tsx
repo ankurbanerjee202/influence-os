@@ -59,7 +59,7 @@ export function BrandStrategy() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       <AgentBanner agentId="navi" name="NAVI" tagline="Your AI brand strategist — positioning, messaging & differentiation." />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+      <div className="r-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
         {stats.map(s => (
           <div key={s.label} style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '14px', boxShadow: '0 1px 2px var(--shadow)', padding: '15px 17px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '9px' }}>
@@ -71,7 +71,7 @@ export function BrandStrategy() {
         ))}
       </div>
 
-      <section style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '18px' }}>
+      <section className="r-2col" style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '18px' }}>
         <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: '0 1px 2px var(--shadow)', padding: '22px' }}>
           <div style={{ fontSize: '10.5px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: '10px' }}>Positioning statement</div>
           <div style={{ fontSize: '18px', fontWeight: 500, lineHeight: 1.55, letterSpacing: '-0.01em' }}>
@@ -97,7 +97,7 @@ export function BrandStrategy() {
         </div>
       </section>
 
-      <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
+      <section className="r-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
         <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: '0 1px 2px var(--shadow)', padding: '20px 22px' }}>
           <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px' }}>Audience personas</div>
           <div style={{ fontSize: '11.5px', color: 'var(--text-3)', marginBottom: '6px' }}>Built with brand context, not templates</div>

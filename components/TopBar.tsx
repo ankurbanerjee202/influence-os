@@ -72,7 +72,7 @@ export function TopBar() {
       </div>
 
       {/* Search */}
-      <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+      <div className="topbar-search" style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
         <div style={{
           width: '100%',
           maxWidth: '420px',
@@ -172,7 +172,7 @@ export function TopBar() {
             fontSize: '12.5px',
             fontWeight: 600,
           }}>EM</div>
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15, paddingRight: '4px' }}>
+          <div className="topbar-user-name" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15, paddingRight: '4px' }}>
             <span style={{ fontSize: '12.5px', fontWeight: 600 }}>Elena Marsh</span>
             <span style={{ fontSize: '11px', color: 'var(--text-3)' }}>Founder &amp; CEO</span>
           </div>

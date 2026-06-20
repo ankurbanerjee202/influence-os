@@ -62,7 +62,7 @@ export function ChatDrawer() {
 
       {/* Drawer */}
       <div
-        className="drawer-in"
+        className="drawer-in chat-drawer"
         style={{
           position: 'relative',
           width: '440px',

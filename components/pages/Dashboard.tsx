@@ -112,7 +112,7 @@ export function Dashboard() {
       </div>
 
       {/* Hero + breakdown */}
-      <section style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 1.1fr', gap: '18px' }}>
+      <section className="r-2col" style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 1.1fr', gap: '18px' }}>
         <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '18px', boxShadow: '0 1px 2px var(--shadow)', padding: '22px', display: 'flex', gap: '20px', alignItems: 'center', overflow: 'hidden' }}>
           <div style={{ position: 'relative', width: '164px', height: '164px', flex: 'none' }}>
             <svg width="164" height="164" viewBox="0 0 180 180">
@@ -173,7 +173,7 @@ export function Dashboard() {
       </section>
 
       {/* Metrics */}
-      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
+      <section className="r-3col" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
         {metrics.map(m => <StatCard key={m.label} {...m} />)}
       </section>
 
@@ -228,7 +228,7 @@ export function Dashboard() {
       </section>
 
       {/* Activity + Coverage */}
-      <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
+      <section className="r-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
         <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '18px', boxShadow: '0 1px 2px var(--shadow)', padding: '20px 22px' }}>
           <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px' }}>Agent activity</div>
           <div style={{ fontSize: '11.5px', color: 'var(--text-3)', marginBottom: '6px' }}>What your team did while you were away</div>

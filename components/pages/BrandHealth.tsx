@@ -53,7 +53,7 @@ export function BrandHealth() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       <AgentBanner />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+      <div className="r-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
         {stats.map(s => (
           <div key={s.label} style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '14px', boxShadow: '0 1px 2px var(--shadow)', padding: '15px 17px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '9px' }}>
@@ -65,7 +65,7 @@ export function BrandHealth() {
         ))}
       </div>
 
-      <section style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '18px' }}>
+      <section className="r-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '18px' }}>
         <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: '0 1px 2px var(--shadow)', padding: '20px 22px' }}>
           <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px' }}>Reputation risk radar</div>
           <div style={{ fontSize: '11.5px', color: 'var(--text-3)', marginBottom: '8px' }}>Early-warning signals, ranked</div>
@@ -96,7 +96,7 @@ export function BrandHealth() {
         </div>
       </section>
 
-      <section style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '18px' }}>
+      <section className="r-2col" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '18px' }}>
         <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: '0 1px 2px var(--shadow)', padding: '20px 22px' }}>
           <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px' }}>Opportunity forecast</div>
           <div style={{ fontSize: '11.5px', color: 'var(--text-3)', marginBottom: '12px' }}>Timing windows LUMA predicts will peak</div>

@@ -34,7 +34,7 @@ export function Settings() {
       <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: '0 1px 2px var(--shadow)', padding: '22px' }}>
         <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px' }}>Brand profile</div>
         <div style={{ fontSize: '11.5px', color: 'var(--text-3)', marginBottom: '18px' }}>Used by all 6 agents to stay consistent with your brand voice and context.</div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+        <div className="r-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
           {[
             { label: 'Company name', value: 'Influence OS', placeholder: 'Your company name' },
             { label: 'Founder / CEO name', value: 'Elena Marsh', placeholder: 'Your name' },
@@ -69,7 +69,7 @@ export function Settings() {
         </div>
       </div>
 
-      <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
+      <section className="r-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
         {/* Voice & Tone */}
         <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: '0 1px 2px var(--shadow)', padding: '22px' }}>
           <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px' }}>Voice & tone</div>
@@ -128,7 +128,7 @@ export function Settings() {
       </section>
 
       {/* Appearance + Notifications */}
-      <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
+      <section className="r-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
         <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: '0 1px 2px var(--shadow)', padding: '22px' }}>
           <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '14px' }}>Appearance</div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderTop: '1px solid var(--border)' }}>
