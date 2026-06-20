@@ -178,7 +178,13 @@ export function ChatDrawer() {
                 border: `1px solid ${msg.role === 'user' ? 'var(--ink)' : 'var(--border)'}`,
                 boxShadow: '0 1px 2px var(--shadow)',
               }}>
-                {msg.text}
+                {msg.typing ? (
+                  <span style={{ display: 'inline-flex', gap: '3px', alignItems: 'center', padding: '2px 0' }}>
+                    {[0, 1, 2].map(i => (
+                      <span key={i} style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--text-3)', display: 'inline-block', animation: 'blink 1.2s infinite', animationDelay: `${i * 0.2}s` }} />
+                    ))}
+                  </span>
+                ) : msg.text}
               </div>
             </div>
           ))}

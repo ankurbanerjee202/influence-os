@@ -77,16 +77,36 @@ export function App() {
   const setChatInput = useCallback((v: string) => patch({ chatInput: v }), [patch])
 
   const addAgentReply = useCallback((id: AgentId) => {
-    setTimeout(() => {
-      patch(s => {
-        const agent = AGENTS.find(a => a.id === id)!
-        const cur = s.chats[id] || []
-        const userCount = cur.filter(m => m.role === 'user').length
-        const pool = agent.replies
-        const reply = pool[(userCount - 1 + pool.length) % pool.length]
-        return { chats: { ...s.chats, [id]: [...cur, { role: 'agent', text: reply }] } }
+    // Add typing indicator
+    patch(s => ({
+      chats: { ...s.chats, [id]: [...(s.chats[id] || []), { role: 'agent', text: '…', typing: true }] }
+    }))
+
+    // Get current messages snapshot to send to API
+    setState(s => {
+      const messages = (s.chats[id] || []).filter((m: Message) => !('typing' in m))
+
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentId: id, messages }),
       })
-    }, 700)
+        .then(r => r.json())
+        .then(({ reply, error }) => {
+          patch(s2 => {
+            const cur = (s2.chats[id] || []).filter((m: Message) => !('typing' in m))
+            return { chats: { ...s2.chats, [id]: [...cur, { role: 'agent', text: reply ?? error ?? 'Something went wrong.' }] } }
+          })
+        })
+        .catch(() => {
+          patch(s2 => {
+            const cur = (s2.chats[id] || []).filter((m: Message) => !('typing' in m))
+            return { chats: { ...s2.chats, [id]: [...cur, { role: 'agent', text: 'Connection error — please try again.' }] } }
+          })
+        })
+
+      return s
+    })
   }, [patch])
 
   const sendCommand = useCallback(() => {

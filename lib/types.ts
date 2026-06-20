@@ -15,6 +15,7 @@ export type AgentId = 'fluent' | 'navi' | 'echo' | 'aura' | 'ivy' | 'luma'
 export interface Message {
   role: 'user' | 'agent'
   text: string
+  typing?: boolean
 }
 
 export interface AppState {
