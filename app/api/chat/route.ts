@@ -29,15 +29,26 @@ Respond as ${agent.name} — stay in character, be concise (2–4 sentences), sp
     content: m.text,
   }))
 
-  const completion = await client.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [
-      { role: 'system', content: systemPrompt },
-      ...openaiMessages,
-    ],
-    max_tokens: 200,
-    temperature: 0.7,
-  })
+  let completion
+  try {
+    completion = await client.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...openaiMessages,
+      ],
+      max_tokens: 200,
+      temperature: 0.7,
+    })
+  } catch (err: unknown) {
+    const status = (err as { status?: number }).status ?? 500
+    const message = (err as { error?: { message?: string } }).error?.message ?? 'OpenAI error'
+    const friendly =
+      status === 429 ? 'OpenAI quota exceeded — add billing credits at platform.openai.com/settings/billing.' :
+      status === 401 ? 'Invalid OpenAI API key — check your Vercel environment variables.' :
+      message
+    return NextResponse.json({ error: friendly }, { status })
+  }
 
   const reply = completion.choices[0]?.message?.content ?? 'Something went wrong — try again.'
   return NextResponse.json({ reply })
