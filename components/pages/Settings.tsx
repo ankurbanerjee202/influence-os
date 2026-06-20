@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { signOut } from 'next-auth/react'
 import { useApp } from '../App'
 
 export function Settings() {
-  const { theme, toggleTheme } = useApp()
+  const { theme, toggleTheme, currentUser, isAdmin, accessLevel } = useApp()
   const [voiceTags, setVoiceTags] = useState(['Direct', 'Confident', 'Strategic', 'Founder-led', 'No-fluff'])
   const [newTag, setNewTag] = useState('')
 
@@ -177,15 +178,24 @@ export function Settings() {
         </div>
       </section>
 
-      {/* Danger zone */}
+      {/* Account */}
       <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: '0 1px 2px var(--shadow)', padding: '22px' }}>
         <div style={{ fontSize: '14px', fontWeight: 600, color: '#e11d48', marginBottom: '12px' }}>Account</div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <div>
-            <div style={{ fontSize: '13px', fontWeight: 600 }}>Elena Marsh</div>
-            <div style={{ fontSize: '11.5px', color: 'var(--text-2)', marginTop: '2px' }}>Founder & CEO · PRO plan · ankur.banerjee202@gmail.com</div>
+            <div style={{ fontSize: '13px', fontWeight: 600 }}>{currentUser?.name || 'User'}</div>
+            <div style={{ fontSize: '11.5px', color: 'var(--text-2)', marginTop: '2px' }}>
+              {isAdmin ? 'Admin' : accessLevel === 'full' ? 'Full access' : 'Pending approval'} · {currentUser?.email}
+            </div>
           </div>
-          <button style={{ height: '34px', padding: '0 14px', border: '1px solid rgba(244,63,94,0.3)', borderRadius: '9px', background: 'transparent', color: '#e11d48', fontFamily: 'inherit', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer' }}>Sign out</button>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {isAdmin && (
+              <a href="/admin" style={{ height: '34px', padding: '0 14px', border: '1px solid var(--border)', borderRadius: '9px', background: 'var(--panel-2)', color: 'var(--text)', fontFamily: 'inherit', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+                Admin Panel
+              </a>
+            )}
+            <button onClick={() => signOut({ callbackUrl: '/login' })} style={{ height: '34px', padding: '0 14px', border: '1px solid rgba(244,63,94,0.3)', borderRadius: '9px', background: 'transparent', color: '#e11d48', fontFamily: 'inherit', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer' }}>Sign out</button>
+          </div>
         </div>
       </div>
     </div>

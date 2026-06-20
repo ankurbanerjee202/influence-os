@@ -47,8 +47,11 @@ function ChevronIcon() {
 }
 
 export function TopBar() {
-  const { page, theme, toggleTheme } = useApp()
+  const { page, theme, toggleTheme, currentUser, isAdmin } = useApp()
   const meta = PAGE_META[page] || { crumb: 'Workspace', title: 'Dashboard' }
+
+  const userName = currentUser?.name || 'User'
+  const userInitials = userName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
 
   return (
     <header style={{
@@ -165,16 +168,21 @@ export function TopBar() {
             width: '34px',
             height: '34px',
             borderRadius: '9px',
-            background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+            background: currentUser?.image ? 'transparent' : 'linear-gradient(135deg, #6366f1, #a855f7)',
             display: 'grid',
             placeItems: 'center',
             color: '#fff',
             fontSize: '12.5px',
             fontWeight: 600,
-          }}>EM</div>
+            overflow: 'hidden',
+          }}>
+            {currentUser?.image ? (
+              <img src={currentUser.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : userInitials}
+          </div>
           <div className="topbar-user-name" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15, paddingRight: '4px' }}>
-            <span style={{ fontSize: '12.5px', fontWeight: 600 }}>Elena Marsh</span>
-            <span style={{ fontSize: '11px', color: 'var(--text-3)' }}>Founder &amp; CEO</span>
+            <span style={{ fontSize: '12.5px', fontWeight: 600 }}>{userName}</span>
+            <span style={{ fontSize: '11px', color: 'var(--text-3)' }}>{isAdmin ? 'Admin' : 'Member'}</span>
           </div>
           <ChevronIcon />
         </div>

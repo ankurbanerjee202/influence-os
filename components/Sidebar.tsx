@@ -1,9 +1,12 @@
 'use client'
 
+import { signOut } from 'next-auth/react'
 import { useApp } from './App'
 import { LogoMark, AgentIcon } from './AgentIcon'
 import type { PageId } from '@/lib/types'
 import { NAV_MAIN, NAV_INTEL } from '@/lib/data'
+
+const LOCKED_PAGES = ['strategy', 'pr', 'content', 'marketplace']
 
 const ICONS: Record<string, React.ReactNode> = {
   dashboard: (
@@ -51,7 +54,7 @@ const ICONS: Record<string, React.ReactNode> = {
   ),
 }
 
-function NavButton({ id, label, active, onClick }: { id: string; label: string; active: boolean; onClick: () => void }) {
+function NavButton({ id, label, active, onClick, locked }: { id: string; label: string; active: boolean; onClick: () => void; locked?: boolean }) {
   return (
     <button
       onClick={onClick}
@@ -64,7 +67,7 @@ function NavButton({ id, label, active, onClick }: { id: string; label: string; 
         border: 'none',
         borderRadius: '9px',
         background: active ? 'var(--accent-soft)' : 'transparent',
-        color: active ? 'var(--accent)' : 'var(--text-2)',
+        color: active ? 'var(--accent)' : locked ? 'var(--text-3)' : 'var(--text-2)',
         fontFamily: 'inherit',
         fontSize: '13.5px',
         fontWeight: active ? 600 : 500,
@@ -78,14 +81,20 @@ function NavButton({ id, label, active, onClick }: { id: string; label: string; 
       <span style={{ display: 'flex', color: active ? 'var(--accent)' : 'var(--text-3)', transition: 'color 0.15s' }}>
         {ICONS[id]}
       </span>
-      {label}
+      <span style={{ flex: 1 }}>{label}</span>
+      {locked && (
+        <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+      )}
     </button>
   )
 }
 
 export function Sidebar() {
-  const { page, setPage, deployed } = useApp()
+  const { page, setPage, deployed, accessLevel, isAdmin, currentUser } = useApp()
   const activeCount = Object.values(deployed).filter(Boolean).length
+  const isLocked = (id: string) => !isAdmin && accessLevel !== 'full' && LOCKED_PAGES.includes(id)
 
   return (
     <aside className="app-side" style={{
@@ -115,6 +124,7 @@ export function Sidebar() {
           label={item.label}
           active={page === item.id}
           onClick={() => setPage(item.id as PageId)}
+          locked={isLocked(item.id)}
         />
       ))}
 
@@ -129,6 +139,7 @@ export function Sidebar() {
           label={item.label}
           active={page === item.id}
           onClick={() => setPage(item.id as PageId)}
+          locked={isLocked(item.id)}
         />
       ))}
 
@@ -137,18 +148,34 @@ export function Sidebar() {
       {/* Usage card */}
       <div style={{ margin: '0 4px 8px', padding: '13px', borderRadius: '12px', background: 'var(--panel-2)', border: '1px solid var(--border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-          <span style={{ fontSize: '12px', fontWeight: 600 }}>Beta workspace</span>
-          <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent)', background: 'var(--accent-soft)', padding: '2px 7px', borderRadius: '5px' }}>PRO</span>
+          <span style={{ fontSize: '12px', fontWeight: 600 }}>
+            {currentUser?.name?.split(' ')[0] || 'Workspace'}
+          </span>
+          <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent)', background: 'var(--accent-soft)', padding: '2px 7px', borderRadius: '5px' }}>
+            {isAdmin ? 'ADMIN' : accessLevel === 'full' ? 'FULL' : 'LIMITED'}
+          </span>
         </div>
         <div style={{ fontSize: '11.5px', color: 'var(--text-2)', lineHeight: 1.45, marginBottom: '10px' }}>
-          {activeCount} agents active · 2,140 actions left this month.
+          {activeCount} agents active · {accessLevel === 'full' || isAdmin ? '2,140 actions left' : 'Full access pending approval'}
         </div>
         <div style={{ height: '5px', borderRadius: '4px', background: 'var(--border-strong)', overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: '68%', borderRadius: '4px', background: 'linear-gradient(90deg, var(--accent), var(--accent-2))' }} />
+          <div style={{ height: '100%', width: accessLevel === 'full' || isAdmin ? '68%' : '20%', borderRadius: '4px', background: 'linear-gradient(90deg, var(--accent), var(--accent-2))' }} />
         </div>
       </div>
 
       <NavButton id="settings" label="Settings" active={page === 'settings'} onClick={() => setPage('settings')} />
+
+      <button
+        onClick={() => signOut({ callbackUrl: '/login' })}
+        style={{ display: 'flex', alignItems: 'center', gap: '11px', width: '100%', padding: '9px 10px', border: 'none', borderRadius: '9px', background: 'transparent', color: 'var(--text-3)', fontFamily: 'inherit', fontSize: '13.5px', fontWeight: 500, cursor: 'pointer', textAlign: 'left', transition: 'background 0.15s, color 0.15s', marginTop: '2px' }}
+        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(244,63,94,0.07)'; e.currentTarget.style.color = '#e11d48' }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-3)' }}
+      >
+        <svg width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+        Sign out
+      </button>
     </aside>
   )
 }

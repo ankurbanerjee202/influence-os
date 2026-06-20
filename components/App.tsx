@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect, createContext, useContext } from 'react'
+import { useSession } from 'next-auth/react'
 import type { AppState, AgentId, PageId, Message } from '@/lib/types'
 import { AGENTS } from '@/lib/data'
 import { Sidebar } from './Sidebar'
@@ -30,6 +31,10 @@ interface AppCtx extends AppState {
   toggleCrisis: () => void
   toggleDeploy: (id: AgentId) => void
   dismissToast: () => void
+  // Auth
+  accessLevel: string
+  isAdmin: boolean
+  currentUser: { name?: string | null; email?: string | null; image?: string | null } | null
 }
 
 export const AppContext = createContext<AppCtx | null>(null)
@@ -38,6 +43,30 @@ export function useApp() {
   const ctx = useContext(AppContext)
   if (!ctx) throw new Error('useApp must be inside AppProvider')
   return ctx
+}
+
+function LockedPage({ title }: { title: string }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60vh', gap: '12px', textAlign: 'center', padding: '24px' }}>
+      <div style={{ width: 52, height: 52, borderRadius: '14px', background: 'var(--panel)', border: '1px solid var(--border)', display: 'grid', placeItems: 'center', marginBottom: '4px' }}>
+        <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+      </div>
+      <div style={{ fontSize: '17px', fontWeight: 700, letterSpacing: '-0.01em' }}>{title} is locked</div>
+      <div style={{ fontSize: '13px', color: 'var(--text-2)', maxWidth: '320px', lineHeight: 1.55 }}>
+        Full access to this feature requires admin approval. You&apos;ll receive an email at <strong>{''}</strong> once approved.
+      </div>
+      <div style={{ marginTop: '4px', display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div style={{ fontSize: '11.5px', color: 'var(--text-3)', background: 'var(--panel)', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '8px' }}>
+          ✓ Brand health &amp; sentiment — available now
+        </div>
+        <div style={{ fontSize: '11.5px', color: 'var(--text-3)', background: 'var(--panel)', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '8px' }}>
+          🔒 Agents, PR &amp; content — after approval
+        </div>
+      </div>
+    </div>
+  )
 }
 
 const INITIAL_STATE: AppState = {
@@ -52,7 +81,13 @@ const INITIAL_STATE: AppState = {
   toast: null,
 }
 
+const LOCKED_PAGES: PageId[] = ['strategy', 'pr', 'content', 'marketplace']
+
 export function App() {
+  const { data: session } = useSession()
+  const accessLevel = session?.user?.accessLevel || 'pending'
+  const isAdmin = session?.user?.role === 'admin'
+  const currentUser = session?.user || null
   const [state, setState] = useState<AppState>(INITIAL_STATE)
 
   const patch = useCallback((up: Partial<AppState> | ((s: AppState) => Partial<AppState>)) => {
@@ -64,13 +99,19 @@ export function App() {
   const toggleTheme = useCallback(() => patch(s => ({ theme: s.theme === 'light' ? 'dark' : 'light' })), [patch])
 
   const openDrawer = useCallback((id: AgentId) => {
+    // Block agent access for non-approved, non-admin users
+    if (accessLevel !== 'full' && !isAdmin) {
+      patch({ toast: 'Agent access requires admin approval. Check your email.' })
+      setTimeout(() => patch({ toast: null }), 3500)
+      return
+    }
     patch(s => {
       const agent = AGENTS.find(a => a.id === id)!
       const chats = { ...s.chats }
       if (!chats[id]) chats[id] = [{ role: 'agent', text: agent.seed }]
       return { drawerAgentId: id, chats }
     })
-  }, [patch])
+  }, [patch, accessLevel, isAdmin])
 
   const closeDrawer = useCallback(() => patch({ drawerAgentId: null }), [patch])
 
@@ -170,16 +211,21 @@ export function App() {
     toggleCrisis,
     toggleDeploy,
     dismissToast,
+    accessLevel,
+    isAdmin,
+    currentUser,
   }
+
+  const canAccess = (page: PageId) => isAdmin || accessLevel === 'full' || !LOCKED_PAGES.includes(page)
 
   const PAGE_MAP: Record<PageId, React.ReactNode> = {
     dashboard: <Dashboard />,
-    strategy: <BrandStrategy />,
-    pr: <PRCenter />,
-    content: <ContentStudio />,
+    strategy: canAccess('strategy') ? <BrandStrategy /> : <LockedPage title="Brand Strategy" />,
+    pr: canAccess('pr') ? <PRCenter /> : <LockedPage title="PR Center" />,
+    content: canAccess('content') ? <ContentStudio /> : <LockedPage title="Content Studio" />,
     monitor: <MediaMonitor />,
     health: <BrandHealth />,
-    marketplace: <AgentMarketplace />,
+    marketplace: canAccess('marketplace') ? <AgentMarketplace /> : <LockedPage title="Agent Marketplace" />,
     settings: <Settings />,
   }
 
