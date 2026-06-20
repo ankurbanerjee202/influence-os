@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+:root{ --bg:#f5f6f8; --panel:#ffffff; --panel-2:#fafbfc; --border:#e8eaef; --border-strong:#dde0e7; --text:#0c1322; --text-2:#5a6473; --text-3:#9aa3b2; --ink:#0c1322; --ink-fg:#ffffff; --accent:#4f46e5; --accent-2:#7c3aed; --accent-soft:#eef0fe; --shadow:rgba(13,18,38,0.05); --shadow-lg:rgba(13,18,38,0.10); }
+[data-theme="dark"]{ --bg:#07080c; --panel:#101218; --panel-2:#15171f; --border:#21242e; --border-strong:#2b2f3a; --text:#eef1f6; --text-2:#98a2b3; --text-3:#5e6878; --ink:#eef1f6; --ink-fg:#0c1322; --accent:#8b7dff; --accent-2:#b69bff; --accent-soft:#181a2c; --shadow:rgba(0,0,0,0.45); --shadow-lg:rgba(0,0,0,0.6); }
+@keyframes scoreDraw{from{stroke-dashoffset:440}to{stroke-dashoffset:96.8}}
+@keyframes floatUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes drawerIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+@keyframes ovIn{from{opacity:0}to{opacity:1}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:8px;border:3px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-track{background:transparent}
+input::placeholder{color:var(--text-3)}
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" style="display:grid; grid-template-columns:250px 1fr 360px; grid-template-rows:64px 1fr; grid-template-areas:'side top top' 'side main rail'; height:100vh; width:100%; background:var(--bg); color:var(--text); overflow:hidden">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside style="grid-area:side; background:var(--panel); border-right:1px solid var(--border); display:flex; flex-direction:column; padding:16px 14px; gap:3px; overflow:hidden">
+    <div style="display:flex; align-items:center; gap:10px; padding:6px 8px 16px 8px; color:var(--ink)">
+      <span style="display:flex">{{ logoMark }}</span>
+      <span style="font-size:15.5px; font-weight:600; letter-spacing:-0.02em; color:var(--text)">Influence OS</span>
+    </div>
+
+    <div style="font-size:10.5px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-3); padding:8px 10px 6px">Workspace</div>
+    <sc-for list="{{ navMain }}" as="item" hint-placeholder-count="5">
+      <button onClick="{{ item.onClick }}" style="display:flex; align-items:center; gap:11px; width:100%; padding:9px 10px; border:none; border-radius:9px; background:{{ item.bg }}; color:{{ item.color }}; font-family:inherit; font-size:13.5px; font-weight:{{ item.weight }}; cursor:pointer; text-align:left; transition:background .15s, color .15s" style-hover="background:var(--accent-soft)">
+        <span style="display:flex; color:{{ item.iconColor }}">{{ item.icon }}</span>{{ item.label }}
+      </button>
+    </sc-for>
+
+    <div style="font-size:10.5px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-3); padding:16px 10px 6px">Intelligence</div>
+    <sc-for list="{{ navIntel }}" as="item" hint-placeholder-count="2">
+      <button onClick="{{ item.onClick }}" style="display:flex; align-items:center; gap:11px; width:100%; padding:9px 10px; border:none; border-radius:9px; background:{{ item.bg }}; color:{{ item.color }}; font-family:inherit; font-size:13.5px; font-weight:{{ item.weight }}; cursor:pointer; text-align:left; transition:background .15s, color .15s" style-hover="background:var(--accent-soft)">
+        <span style="display:flex; color:{{ item.iconColor }}">{{ item.icon }}</span>{{ item.label }}
+      </button>
+    </sc-for>
+
+    <div style="flex:1"></div>
+
+    <div style="margin:0 4px 8px; padding:13px; border-radius:12px; background:var(--panel-2); border:1px solid var(--border)">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px"><span style="font-size:12px; font-weight:600">Beta workspace</span><span style="font-size:10px; font-weight:600; color:var(--accent); background:var(--accent-soft); padding:2px 7px; border-radius:5px">PRO</span></div>
+      <div style="font-size:11.5px; color:var(--text-2); line-height:1.45; margin-bottom:10px">6 agents active · 2,140 actions left this month.</div>
+      <div style="height:5px; border-radius:4px; background:var(--border-strong); overflow:hidden"><div style="height:100%; width:68%; border-radius:4px; background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div></div>
+    </div>
+
+    <button onClick="{{ navSettings.onClick }}" style="display:flex; align-items:center; gap:11px; width:100%; padding:9px 10px; border:none; border-radius:9px; background:{{ navSettings.bg }}; color:{{ navSettings.color }}; font-family:inherit; font-size:13.5px; font-weight:{{ navSettings.weight }}; cursor:pointer; text-align:left" style-hover="background:var(--accent-soft)">
+      <span style="display:flex; color:{{ navSettings.iconColor }}">{{ navSettings.icon }}</span>Settings
+    </button>
+  </aside>
+
+  <!-- ============ TOPBAR ============ -->
+  <header style="grid-area:top; background:var(--panel); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:18px; padding:0 22px; z-index:5">
+    <div style="display:flex; flex-direction:column; gap:2px; min-width:170px">
+      <div style="font-size:11px; color:var(--text-3); font-weight:500">{{ pageCrumb }} <span style="color:var(--border-strong)">/</span> <span style="color:var(--text-2)">{{ pageTitle }}</span></div>
+      <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em">{{ pageTitle }}</div>
+    </div>
+    <div style="flex:1; display:flex; justify-content:center">
+      <div style="width:100%; max-width:420px; display:flex; align-items:center; gap:9px; height:38px; padding:0 12px; background:var(--bg); border:1px solid var(--border); border-radius:10px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input placeholder="Search mentions, agents, assets…" style="border:none; background:transparent; outline:none; flex:1; font-size:13px; color:var(--text); font-family:inherit"/>
+        <span style="font-size:10.5px; font-weight:500; border:1px solid var(--border-strong); border-radius:5px; padding:1px 5px; color:var(--text-3)">⌘K</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px">
+      <button onClick="{{ toggleTheme }}" title="Toggle theme" style="width:38px; height:38px; display:grid; place-items:center; border:1px solid var(--border); border-radius:10px; background:var(--panel); color:var(--text-2); cursor:pointer; transition:background .15s" style-hover="background:var(--bg)">{{ themeIcon }}</button>
+      <button style="position:relative; width:38px; height:38px; display:grid; place-items:center; border:1px solid var(--border); border-radius:10px; background:var(--panel); color:var(--text-2); cursor:pointer; transition:background .15s" style-hover="background:var(--bg)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+        <span style="position:absolute; top:9px; right:10px; width:7px; height:7px; border-radius:50%; background:#f43f5e; border:2px solid var(--panel)"></span>
+      </button>
+      <div style="width:1px; height:26px; background:var(--border); margin:0 2px"></div>
+      <div style="display:flex; align-items:center; gap:9px; cursor:pointer; padding:3px 4px 3px 3px; border-radius:10px" style-hover="background:var(--bg)">
+        <div style="width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg,#6366f1,#a855f7); display:grid; place-items:center; color:#fff; font-size:12.5px; font-weight:600">EM</div>
+        <div style="display:flex; flex-direction:column; line-height:1.15; padding-right:4px">
+          <span style="font-size:12.5px; font-weight:600">Elena Marsh</span>
+          <span style="font-size:11px; color:var(--text-3)">Founder &amp; CEO</span>
+        </div>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ MAIN CANVAS ============ -->
+  <main data-screen-label="{{ pageTitle }}" style="grid-area:main; overflow-y:auto; padding:24px 26px 44px">
+
+    <!-- ====== DASHBOARD ====== -->
+    <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-label="Dashboard" style="display:flex; flex-direction:column; gap:20px; animation:pageIn .35s ease">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px">
+        <div>
+          <h1 style="font-size:22px; font-weight:600; letter-spacing:-0.025em; margin:0">Good morning, Elena</h1>
+          <p style="font-size:13px; color:var(--text-2); margin:5px 0 0">Your AI brand team has been working overnight. Here's where things stand.</p>
+        </div>
+        <button onClick="{{ openMarketplace }}" style="display:inline-flex; align-items:center; gap:8px; height:38px; padding:0 15px; border:1px solid var(--border); border-radius:10px; background:var(--panel); color:var(--text); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer" style-hover="background:var(--bg)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"></rect><rect x="13" y="4" width="7" height="7" rx="1.5"></rect><rect x="4" y="13" width="7" height="7" rx="1.5"></rect><rect x="13" y="13" width="7" height="7" rx="1.5"></rect></svg>Manage agents</button>
+      </div>
+
+      <!-- AGENCY REPLACEMENT STRIP -->
+      <div style="background:var(--ink); border-radius:16px; padding:18px 22px; display:flex; align-items:center; gap:22px; flex-wrap:wrap; box-shadow:0 6px 20px var(--shadow)">
+        <div style="min-width:170px">
+          <div style="font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:rgba(255,255,255,.55)">Replaced this week</div>
+          <div style="font-size:13px; color:rgba(255,255,255,.78); margin-top:5px; line-height:1.4">What a full PR &amp; brand agency would have delivered — done automatically.</div>
+        </div>
+        <div style="flex:1; display:flex; gap:14px; flex-wrap:wrap">
+          <sc-for list="{{ replaced }}" as="r" hint-placeholder-count="4">
+            <div style="flex:1; min-width:120px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:12px 14px">
+              <div style="font-size:21px; font-weight:700; color:#fff; letter-spacing:-0.02em">{{ r.value }}</div>
+              <div style="font-size:11.5px; color:rgba(255,255,255,.65); margin-top:2px">{{ r.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- HERO + BREAKDOWN -->
+      <section style="display:grid; grid-template-columns:minmax(300px,1fr) 1.1fr; gap:18px">
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:18px; box-shadow:0 1px 2px var(--shadow); padding:22px; display:flex; gap:20px; align-items:center; overflow:hidden">
+          <div style="position:relative; width:164px; height:164px; flex:none">
+            <svg width="164" height="164" viewBox="0 0 180 180">
+              <defs><linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="var(--accent)"></stop><stop offset="100%" stop-color="var(--accent-2)"></stop></linearGradient></defs>
+              <circle cx="90" cy="90" r="70" fill="none" stroke="var(--border)" stroke-width="13"></circle>
+              <circle cx="90" cy="90" r="70" fill="none" stroke="url(#scoreGrad)" stroke-width="13" stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="440" transform="rotate(-90 90 90)" style="animation:scoreDraw 1.5s cubic-bezier(.34,.85,.4,1) .15s forwards"></circle>
+            </svg>
+            <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center"><div style="font-size:44px; font-weight:700; letter-spacing:-0.03em; line-height:1">84</div><div style="font-size:11px; color:var(--text-3); font-weight:500">Brand Health</div></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:9px; min-width:0">
+            <div style="display:inline-flex; align-items:center; gap:6px; align-self:flex-start; padding:4px 9px; border-radius:7px; background:rgba(16,185,129,.12); color:#0f9b6c; font-size:11.5px; font-weight:600"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"></path></svg>+6 this month</div>
+            <div style="font-size:17px; font-weight:600; letter-spacing:-0.02em; line-height:1.2">Founder Authority &amp; Brand Health</div>
+            <div style="font-size:12.5px; color:var(--text-2); line-height:1.5">Scored live by <b style="color:var(--text); font-weight:600">LUMA</b>. You rank in the top 8% of founders in AI &amp; SaaS — momentum is strong.</div>
+            <button onClick="{{ openHealth }}" style="align-self:flex-start; margin-top:2px; font-size:12.5px; font-weight:600; color:var(--accent); background:none; border:none; cursor:pointer; font-family:inherit; padding:0">View full report →</button>
+          </div>
+        </div>
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:18px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px; display:flex; flex-direction:column; justify-content:center; gap:14px">
+          <div style="display:flex; align-items:center; justify-content:space-between"><div style="font-size:13.5px; font-weight:600">Health breakdown</div><div style="font-size:11.5px; color:var(--text-3)">vs. last 30 days</div></div>
+          <sc-for list="{{ breakdown }}" as="b" hint-placeholder-count="4">
+            <div style="display:flex; flex-direction:column; gap:6px">
+              <div style="display:flex; align-items:baseline; justify-content:space-between"><span style="font-size:12.5px; color:var(--text-2); font-weight:500">{{ b.label }}</span><span style="font-size:12.5px; font-weight:600">{{ b.value }}<span style="color:#0f9b6c; font-weight:600; font-size:11px; margin-left:6px">{{ b.delta }}</span></span></div>
+              <div style="height:7px; border-radius:5px; background:var(--bg); overflow:hidden"><div style="height:100%; border-radius:5px; width:{{ b.width }}; background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div></div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <!-- METRICS -->
+      <section style="display:grid; grid-template-columns:repeat(3,1fr); gap:18px">
+        <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="3">
+          <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:18px 20px">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:11px">
+              <div style="display:flex; align-items:center; gap:9px"><div style="width:32px; height:32px; border-radius:9px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center">{{ m.icon }}</div><span style="font-size:12.5px; color:var(--text-2); font-weight:500">{{ m.label }}</span></div>
+              <span style="font-size:11px; font-weight:600; color:#0f9b6c">{{ m.delta }}</span>
+            </div>
+            <div style="font-size:26px; font-weight:700; letter-spacing:-0.025em; margin-bottom:3px">{{ m.value }}</div>
+            <div style="font-size:11.5px; color:var(--text-3)">{{ m.note }} · by {{ m.agent }}</div>
+          </div>
+        </sc-for>
+      </section>
+
+      <!-- COMMAND CENTER -->
+      <section style="position:relative; background:var(--panel); border:1px solid var(--border); border-radius:18px; box-shadow:0 1px 2px var(--shadow); padding:22px 24px; overflow:hidden">
+        <div style="position:absolute; top:-60px; right:-30px; width:240px; height:240px; background:radial-gradient(circle,var(--accent-soft),transparent 70%); pointer-events:none"></div>
+        <div style="display:flex; align-items:center; gap:11px; margin-bottom:14px; position:relative">
+          <div style="width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); display:grid; place-items:center; box-shadow:0 4px 12px var(--shadow)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"></path></svg></div>
+          <div><div style="font-size:15px; font-weight:600; letter-spacing:-0.015em">Command Center</div><div style="font-size:12px; color:var(--text-2)">Tell your agents what you need — in plain language.</div></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; height:48px; padding:0 8px 0 16px; background:var(--bg); border:1px solid var(--border); border-radius:12px; transition:border-color .15s" style-focus-within="border-color:var(--accent)">
+          <input value="{{ command }}" onChange="{{ setCommand }}" onKeyDown="{{ onCommandKey }}" placeholder="e.g. Draft a Series A press release and find 5 journalists to pitch…" style="flex:1; border:none; background:transparent; outline:none; font-size:13.5px; color:var(--text); font-family:inherit"/>
+          <button onClick="{{ sendCommand }}" style="display:flex; align-items:center; gap:7px; height:34px; padding:0 15px; border:none; border-radius:9px; background:var(--ink); color:var(--ink-fg); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer" style-hover="opacity:.9">Run<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 14 0"></path><path d="m13 6 6 6-6 6"></path></svg></button>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:13px">
+          <sc-for list="{{ chips }}" as="c" hint-placeholder-count="3">
+            <button onClick="{{ c.onClick }}" style="display:flex; align-items:center; gap:7px; padding:7px 12px; border:1px solid var(--border); border-radius:8px; background:var(--panel); color:var(--text-2); font-family:inherit; font-size:12px; font-weight:500; cursor:pointer; transition:all .15s" style-hover="border-color:var(--accent); color:var(--accent); background:var(--accent-soft)"><span style="display:flex; color:var(--accent)">{{ c.icon }}</span>{{ c.label }}</button>
+          </sc-for>
+        </div>
+      </section>
+
+      <!-- ACTIVITY + COVERAGE -->
+      <section style="display:grid; grid-template-columns:1fr 1fr; gap:18px">
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:18px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="font-size:14px; font-weight:600; margin-bottom:4px">Agent activity</div>
+          <div style="font-size:11.5px; color:var(--text-3); margin-bottom:6px">What your team did while you were away</div>
+          <sc-for list="{{ activity }}" as="a" hint-placeholder-count="5">
+            <div style="display:flex; gap:12px; padding:11px 0; border-top:1px solid var(--border)">
+              <div style="width:30px; height:30px; border-radius:8px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center; flex:none">{{ a.icon }}</div>
+              <div style="flex:1; min-width:0"><div style="font-size:12.5px; line-height:1.4"><b style="font-weight:600">{{ a.agent }}</b> {{ a.text }}</div><div style="font-size:11px; color:var(--text-3); margin-top:2px">{{ a.time }}</div></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:18px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px"><div style="font-size:14px; font-weight:600">Recent coverage</div><button onClick="{{ openMonitor }}" style="font-size:12px; font-weight:500; color:var(--accent); background:none; border:none; cursor:pointer; font-family:inherit">View all →</button></div>
+          <sc-for list="{{ mentions }}" as="m" hint-placeholder-count="3">
+            <div style="display:flex; align-items:center; gap:13px; padding:13px 0; border-top:1px solid var(--border)">
+              <div style="width:40px; height:40px; border-radius:10px; background:var(--bg); border:1px solid var(--border); display:grid; place-items:center; font-size:12px; font-weight:700; color:var(--text-2); flex:none">{{ m.mono }}</div>
+              <div style="flex:1; min-width:0"><div style="font-size:11.5px; color:var(--text-2); font-weight:600; margin-bottom:1px">{{ m.outlet }} · {{ m.time }}</div><div style="font-size:13px; font-weight:500; line-height:1.35; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ m.headline }}</div></div>
+              <span style="flex:none; padding:4px 9px; border-radius:7px; font-size:10.5px; font-weight:600; background:{{ m.badgeBg }}; color:{{ m.badgeText }}">{{ m.sentiment }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+    </sc-if>
+
+    <!-- ====== BRAND STRATEGY (NAVI) ====== -->
+    <sc-if value="{{ isStrategy }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Brand Strategy" style="display:flex; flex-direction:column; gap:20px; animation:pageIn .35s ease">
+      {{ banner_navi }}
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px">
+        <sc-for list="{{ naviStats }}" as="s" hint-placeholder-count="4">
+          <div style="background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:0 1px 2px var(--shadow); padding:15px 17px">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:9px"><span style="font-size:11.5px; color:var(--text-2); font-weight:500">{{ s.label }}</span><span style="font-size:10px; font-weight:600; color:{{ s.deltaColor }}; background:{{ s.deltaBg }}; padding:2px 6px; border-radius:5px">{{ s.delta }}</span></div>
+            <div style="font-size:23px; font-weight:700; letter-spacing:-0.02em">{{ s.value }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <section style="display:grid; grid-template-columns:1.3fr 1fr; gap:18px">
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:22px">
+          <div style="font-size:10.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-3); margin-bottom:10px">Positioning statement</div>
+          <div style="font-size:18px; font-weight:500; line-height:1.55; letter-spacing:-0.01em; text-wrap:pretty">For <b style="font-weight:600">growth-stage founders</b> who refuse to be invisible, Influence OS is the <b style="font-weight:600">AI brand intelligence layer</b> that turns expertise into authority — owning the <span style="color:var(--accent); font-weight:600">"founder-led intelligence"</span> category that legacy agencies can't.</div>
+          <div style="display:flex; gap:8px; margin-top:18px; flex-wrap:wrap"><button onClick="{{ openNavi }}" style="display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 14px; border:none; border-radius:9px; background:var(--ink); color:var(--ink-fg); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer">Refine with NAVI</button><button style="height:36px; padding:0 14px; border:1px solid var(--border); border-radius:9px; background:var(--panel); color:var(--text); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer">Export brief</button></div>
+        </div>
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="font-size:14px; font-weight:600; margin-bottom:12px">Messaging pillars</div>
+          <sc-for list="{{ pillars }}" as="p" hint-placeholder-count="3">
+            <div style="padding:12px 0; border-top:1px solid var(--border)"><div style="display:flex; align-items:center; gap:8px; margin-bottom:3px"><span style="width:6px; height:6px; border-radius:2px; background:var(--accent)"></span><span style="font-size:13px; font-weight:600">{{ p.title }}</span></div><div style="font-size:12px; color:var(--text-2); line-height:1.45; padding-left:14px">{{ p.desc }}</div></div>
+          </sc-for>
+        </div>
+      </section>
+      <section style="display:grid; grid-template-columns:1fr 1fr; gap:18px">
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="font-size:14px; font-weight:600; margin-bottom:4px">Audience personas</div>
+          <div style="font-size:11.5px; color:var(--text-3); margin-bottom:6px">Built with brand context, not templates</div>
+          <sc-for list="{{ personas }}" as="p" hint-placeholder-count="3">
+            <div style="display:flex; gap:12px; padding:12px 0; border-top:1px solid var(--border)">
+              <div style="width:38px; height:38px; border-radius:10px; background:linear-gradient(135deg,{{ p.c1 }},{{ p.c2 }}); display:grid; place-items:center; color:#fff; font-size:13px; font-weight:600; flex:none">{{ p.initials }}</div>
+              <div style="flex:1; min-width:0"><div style="font-size:13px; font-weight:600">{{ p.name }}</div><div style="font-size:11.5px; color:var(--text-2); line-height:1.45; margin-top:2px">{{ p.desc }}</div></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="font-size:14px; font-weight:600; margin-bottom:4px">Competitive white-space</div>
+          <div style="font-size:11.5px; color:var(--text-3); margin-bottom:10px">Narrative territory ownership</div>
+          <sc-for list="{{ competitors }}" as="c" hint-placeholder-count="4">
+            <div style="display:flex; align-items:center; gap:12px; padding:9px 0">
+              <span style="font-size:12.5px; font-weight:500; width:120px; flex:none">{{ c.name }}</span>
+              <div style="flex:1; height:8px; border-radius:5px; background:var(--bg); overflow:hidden"><div style="height:100%; border-radius:5px; width:{{ c.width }}; background:{{ c.color }}"></div></div>
+              <span style="font-size:11px; color:var(--text-3); width:78px; flex:none; text-align:right">{{ c.note }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+    </sc-if>
+
+    <!-- ====== PR CENTER (FLUENT) ====== -->
+    <sc-if value="{{ isPr }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="PR Center" style="display:flex; flex-direction:column; gap:20px; animation:pageIn .35s ease">
+      {{ banner_fluent }}
+      <sc-if value="{{ crisis }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:center; gap:14px; background:rgba(244,63,94,.08); border:1px solid rgba(244,63,94,.3); border-radius:14px; padding:14px 18px">
+          <div style="width:36px; height:36px; border-radius:9px; background:rgba(244,63,94,.15); color:#e11d48; display:grid; place-items:center; flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg></div>
+          <div style="flex:1"><div style="font-size:13px; font-weight:600; color:#e11d48">Crisis Mode active</div><div style="font-size:12px; color:var(--text-2); margin-top:1px">FLUENT is generating risk-sensitive holding statements and stakeholder messaging. ECHO is watching sentiment in real time.</div></div>
+          <button onClick="{{ toggleCrisis }}" style="height:34px; padding:0 14px; border:1px solid rgba(244,63,94,.4); border-radius:9px; background:transparent; color:#e11d48; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer">Stand down</button>
+        </div>
+      </sc-if>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px">
+        <sc-for list="{{ fluentStats }}" as="s" hint-placeholder-count="4">
+          <div style="background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:0 1px 2px var(--shadow); padding:15px 17px">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:9px"><span style="font-size:11.5px; color:var(--text-2); font-weight:500">{{ s.label }}</span><span style="font-size:10px; font-weight:600; color:{{ s.deltaColor }}; background:{{ s.deltaBg }}; padding:2px 6px; border-radius:5px">{{ s.delta }}</span></div>
+            <div style="font-size:23px; font-weight:700; letter-spacing:-0.02em">{{ s.value }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <!-- PR Pipeline -->
+      <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px"><div><div style="font-size:14px; font-weight:600">PR pipeline</div><div style="font-size:11.5px; color:var(--text-3); margin-top:2px">Every asset drafted by FLUENT, ready for your review</div></div><button onClick="{{ openFluent }}" style="display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 14px; border:none; border-radius:9px; background:var(--ink); color:var(--ink-fg); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>New press asset</button></div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px">
+          <sc-for list="{{ pipeline }}" as="col" hint-placeholder-count="4">
+            <div style="background:var(--panel-2); border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:9px">
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:0 2px"><span style="font-size:11.5px; font-weight:600; color:var(--text-2)">{{ col.stage }}</span><span style="font-size:11px; font-weight:600; color:var(--text-3); background:var(--panel); border:1px solid var(--border); border-radius:20px; min-width:20px; text-align:center; padding:1px 6px">{{ col.count }}</span></div>
+              <sc-for list="{{ col.items }}" as="it" hint-placeholder-count="2">
+                <div style="background:var(--panel); border:1px solid var(--border); border-radius:9px; padding:10px 11px; cursor:pointer" style-hover="border-color:var(--border-strong)"><div style="font-size:12px; font-weight:600; line-height:1.35; margin-bottom:6px">{{ it.title }}</div><span style="font-size:10px; font-weight:600; color:{{ it.tagColor }}; background:{{ it.tagBg }}; padding:2px 7px; border-radius:5px">{{ it.tag }}</span></div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <!-- Tools + Crisis -->
+      <section style="display:grid; grid-template-columns:1.4fr 1fr; gap:18px">
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="font-size:14px; font-weight:600; margin-bottom:12px">Communication tools</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+            <sc-for list="{{ fluentTools }}" as="t" hint-placeholder-count="4">
+              <button onClick="{{ openFluent }}" style="display:flex; align-items:flex-start; gap:11px; text-align:left; padding:14px; border:1px solid var(--border); border-radius:12px; background:var(--panel-2); cursor:pointer; font-family:inherit; transition:border-color .15s" style-hover="border-color:var(--accent)">
+                <div style="width:34px; height:34px; border-radius:9px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center; flex:none">{{ t.icon }}</div>
+                <div><div style="font-size:13px; font-weight:600; color:var(--text)">{{ t.title }}</div><div style="font-size:11.5px; color:var(--text-2); line-height:1.4; margin-top:2px">{{ t.desc }}</div></div>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:linear-gradient(160deg,rgba(244,63,94,.06),var(--panel) 60%); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px; display:flex; flex-direction:column">
+          <div style="width:38px; height:38px; border-radius:10px; background:rgba(244,63,94,.13); color:#e11d48; display:grid; place-items:center; margin-bottom:12px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 11 2 2 4-4"></path></svg></div>
+          <div style="font-size:14px; font-weight:600">Crisis Mode</div>
+          <div style="font-size:12.5px; color:var(--text-2); line-height:1.5; margin:6px 0 16px; flex:1">Activate to instantly generate holding statements, leadership notes and risk-minimized language — with ECHO monitoring sentiment live.</div>
+          <button onClick="{{ toggleCrisis }}" style="height:40px; border:none; border-radius:10px; background:{{ crisisBtnBg }}; color:{{ crisisBtnColor }}; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer">{{ crisisBtnLabel }}</button>
+        </div>
+      </section>
+    </div>
+    </sc-if>
+
+    <!-- ====== CONTENT STUDIO (AURA + IVY) ====== -->
+    <sc-if value="{{ isContent }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Content Studio" style="display:flex; flex-direction:column; gap:20px; animation:pageIn .35s ease">
+      {{ banner_content }}
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px">
+        <sc-for list="{{ contentStats }}" as="s" hint-placeholder-count="4">
+          <div style="background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:0 1px 2px var(--shadow); padding:15px 17px">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:9px"><span style="font-size:11.5px; color:var(--text-2); font-weight:500">{{ s.label }}</span><span style="font-size:10px; font-weight:600; color:{{ s.deltaColor }}; background:{{ s.deltaBg }}; padding:2px 6px; border-radius:5px">{{ s.delta }}</span></div>
+            <div style="font-size:23px; font-weight:700; letter-spacing:-0.02em">{{ s.value }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <!-- Content calendar -->
+      <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px"><div><div style="font-size:14px; font-weight:600">This week's content calendar</div><div style="font-size:11.5px; color:var(--text-3); margin-top:2px">AURA drafts in your voice · IVY schedules across platforms</div></div><button onClick="{{ openAura }}" style="display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 14px; border:none; border-radius:9px; background:var(--ink); color:var(--ink-fg); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer">Generate week with AURA</button></div>
+        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:12px">
+          <sc-for list="{{ calendar }}" as="d" hint-placeholder-count="5">
+            <div style="display:flex; flex-direction:column; gap:9px">
+              <div style="font-size:11px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; padding-left:2px">{{ d.day }}</div>
+              <sc-for list="{{ d.posts }}" as="p" hint-placeholder-count="1">
+                <div style="background:var(--panel-2); border:1px solid var(--border); border-left:3px solid {{ p.accent }}; border-radius:9px; padding:10px 11px"><div style="display:flex; align-items:center; gap:6px; margin-bottom:5px"><span style="font-size:10px; font-weight:600; color:var(--text-2)">{{ p.platform }}</span></div><div style="font-size:11.5px; font-weight:500; line-height:1.4; color:var(--text)">{{ p.title }}</div><div style="font-size:10px; color:{{ p.statusColor }}; font-weight:600; margin-top:6px">{{ p.status }}</div></div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <section style="display:grid; grid-template-columns:1fr 1.1fr; gap:18px">
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="font-size:14px; font-weight:600; margin-bottom:4px">Thought leadership pillars</div>
+          <div style="font-size:11.5px; color:var(--text-3); margin-bottom:12px">Your authority is built on these themes — by AURA</div>
+          <div style="display:flex; flex-direction:column; gap:10px">
+            <sc-for list="{{ tlPillars }}" as="p" hint-placeholder-count="4">
+              <div style="display:flex; align-items:center; gap:12px; padding:11px 13px; background:var(--panel-2); border:1px solid var(--border); border-radius:11px"><div style="width:30px; height:30px; border-radius:8px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center; font-size:12px; font-weight:700; flex:none">{{ p.pct }}</div><div style="flex:1"><div style="font-size:12.5px; font-weight:600">{{ p.title }}</div><div style="font-size:11px; color:var(--text-2)">{{ p.note }}</div></div></div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px"><div><div style="font-size:14px; font-weight:600">1 → 10 Repurpose engine</div><div style="font-size:11.5px; color:var(--text-3); margin-top:2px">IVY turns one asset into a full multi-platform set</div></div></div>
+          <div style="display:flex; align-items:center; gap:12px; padding:12px 14px; background:var(--ink); border-radius:11px; margin:10px 0 14px"><div style="width:34px; height:34px; border-radius:8px; background:rgba(255,255,255,.12); display:grid; place-items:center; flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg></div><div style="flex:1; min-width:0"><div style="font-size:12.5px; font-weight:600; color:#fff">"Why founders must own their narrative"</div><div style="font-size:11px; color:rgba(255,255,255,.6)">Source · long-form LinkedIn essay</div></div></div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:9px">
+            <sc-for list="{{ repurpose }}" as="r" hint-placeholder-count="6">
+              <div style="display:flex; align-items:center; gap:9px; padding:9px 11px; background:var(--panel-2); border:1px solid var(--border); border-radius:9px"><span style="display:flex; color:var(--accent)">{{ r.icon }}</span><div style="min-width:0"><div style="font-size:11.5px; font-weight:600">{{ r.fmt }}</div><div style="font-size:10px; color:var(--text-3)">{{ r.count }}</div></div></div>
+            </sc-for>
+          </div>
+          <button onClick="{{ openIvy }}" style="width:100%; margin-top:14px; height:38px; border:1px solid var(--border); border-radius:10px; background:var(--panel); color:var(--text); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer" style-hover="background:var(--bg)">Schedule all with IVY</button>
+        </div>
+      </section>
+    </div>
+    </sc-if>
+
+    <!-- ====== MEDIA MONITOR (ECHO) ====== -->
+    <sc-if value="{{ isMonitor }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Media Monitor" style="display:flex; flex-direction:column; gap:20px; animation:pageIn .35s ease">
+      {{ banner_echo }}
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px">
+        <sc-for list="{{ echoStats }}" as="s" hint-placeholder-count="4">
+          <div style="background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:0 1px 2px var(--shadow); padding:15px 17px">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:9px"><span style="font-size:11.5px; color:var(--text-2); font-weight:500">{{ s.label }}</span><span style="font-size:10px; font-weight:600; color:{{ s.deltaColor }}; background:{{ s.deltaBg }}; padding:2px 6px; border-radius:5px">{{ s.delta }}</span></div>
+            <div style="font-size:23px; font-weight:700; letter-spacing:-0.02em">{{ s.value }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <section style="display:grid; grid-template-columns:1.5fr 1fr; gap:18px">
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><div style="font-size:14px; font-weight:600">Sentiment, last 14 days</div><div style="display:flex; gap:14px; font-size:11px; color:var(--text-2)"><span style="display:flex; align-items:center; gap:5px"><span style="width:8px; height:8px; border-radius:2px; background:#10b981"></span>Positive</span><span style="display:flex; align-items:center; gap:5px"><span style="width:8px; height:8px; border-radius:2px; background:var(--border-strong)"></span>Neutral</span></div></div>
+          <svg width="100%" height="160" viewBox="0 0 600 160" preserveAspectRatio="none">
+            <defs><linearGradient id="sentArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity="0.22"></stop><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"></stop></linearGradient></defs>
+            <path d="M0,120 L46,110 L92,118 L138,96 L184,104 L230,82 L276,90 L322,66 L368,74 L414,52 L460,60 L506,40 L552,46 L600,30 L600,160 L0,160 Z" fill="url(#sentArea)"></path>
+            <path d="M0,120 L46,110 L92,118 L138,96 L184,104 L230,82 L276,90 L322,66 L368,74 L414,52 L460,60 L506,40 L552,46 L600,30" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <div style="display:flex; justify-content:space-between; font-size:10.5px; color:var(--text-3); margin-top:4px"><span>Jun 6</span><span>Jun 13</span><span>Jun 20</span></div>
+        </div>
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="font-size:14px; font-weight:600; margin-bottom:4px">Trend radar</div>
+          <div style="font-size:11.5px; color:var(--text-3); margin-bottom:12px">Conversations rising around you</div>
+          <div style="display:flex; flex-direction:column; gap:9px">
+            <sc-for list="{{ trends }}" as="t" hint-placeholder-count="4">
+              <div style="display:flex; align-items:center; gap:10px"><span style="font-size:12.5px; font-weight:500; flex:1">{{ t.tag }}</span><div style="width:90px; height:6px; border-radius:4px; background:var(--bg); overflow:hidden"><div style="height:100%; border-radius:4px; width:{{ t.width }}; background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div></div><span style="font-size:11px; font-weight:600; color:#0f9b6c; width:40px; text-align:right">{{ t.delta }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+      <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px"><div style="font-size:14px; font-weight:600">Live mention feed</div><div style="display:flex; gap:6px"><span style="font-size:11px; font-weight:600; color:var(--accent); background:var(--accent-soft); padding:4px 10px; border-radius:7px">All</span><span style="font-size:11px; font-weight:500; color:var(--text-2); padding:4px 10px; border-radius:7px">Positive</span><span style="font-size:11px; font-weight:500; color:var(--text-2); padding:4px 10px; border-radius:7px">Risk</span></div></div>
+        <sc-for list="{{ feed }}" as="f" hint-placeholder-count="4">
+          <div style="display:flex; align-items:center; gap:13px; padding:13px 0; border-top:1px solid var(--border)">
+            <div style="width:40px; height:40px; border-radius:10px; background:var(--bg); border:1px solid var(--border); display:grid; place-items:center; font-size:12px; font-weight:700; color:var(--text-2); flex:none">{{ f.mono }}</div>
+            <div style="flex:1; min-width:0"><div style="font-size:11.5px; color:var(--text-2); font-weight:600; margin-bottom:1px">{{ f.outlet }} · {{ f.time }}</div><div style="font-size:13px; font-weight:500; line-height:1.35; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ f.headline }}</div></div>
+            <span style="flex:none; padding:4px 9px; border-radius:7px; font-size:10.5px; font-weight:600; background:{{ f.badgeBg }}; color:{{ f.badgeText }}">{{ f.sentiment }}</span>
+            <button onClick="{{ openEcho }}" style="flex:none; height:30px; padding:0 12px; border:1px solid var(--border); border-radius:8px; background:var(--panel); color:var(--text); font-family:inherit; font-size:11.5px; font-weight:600; cursor:pointer" style-hover="border-color:var(--accent); color:var(--accent)">{{ f.action }}</button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ====== BRAND HEALTH (LUMA) ====== -->
+    <sc-if value="{{ isHealth }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Brand Health" style="display:flex; flex-direction:column; gap:20px; animation:pageIn .35s ease">
+      {{ banner_luma }}
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px">
+        <sc-for list="{{ lumaStats }}" as="s" hint-placeholder-count="4">
+          <div style="background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:0 1px 2px var(--shadow); padding:15px 17px">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:9px"><span style="font-size:11.5px; color:var(--text-2); font-weight:500">{{ s.label }}</span><span style="font-size:10px; font-weight:600; color:{{ s.deltaColor }}; background:{{ s.deltaBg }}; padding:2px 6px; border-radius:5px">{{ s.delta }}</span></div>
+            <div style="font-size:23px; font-weight:700; letter-spacing:-0.02em">{{ s.value }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <section style="display:grid; grid-template-columns:1fr 1.2fr; gap:18px">
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="font-size:14px; font-weight:600; margin-bottom:4px">Reputation risk radar</div>
+          <div style="font-size:11.5px; color:var(--text-3); margin-bottom:8px">Early-warning signals, ranked</div>
+          <sc-for list="{{ risks }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex; align-items:flex-start; gap:11px; padding:12px 0; border-top:1px solid var(--border)">
+              <span style="width:9px; height:9px; border-radius:50%; background:{{ r.dot }}; margin-top:4px; flex:none"></span>
+              <div style="flex:1"><div style="font-size:12.5px; font-weight:600">{{ r.title }}</div><div style="font-size:11.5px; color:var(--text-2); line-height:1.45; margin-top:2px">{{ r.desc }}</div></div>
+              <span style="font-size:10px; font-weight:600; color:{{ r.lvlColor }}; background:{{ r.lvlBg }}; padding:3px 8px; border-radius:6px; flex:none">{{ r.level }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="font-size:14px; font-weight:600; margin-bottom:4px">Competitive momentum</div>
+          <div style="font-size:11.5px; color:var(--text-3); margin-bottom:12px">Who's gaining ground in your category</div>
+          <sc-for list="{{ momentum }}" as="m" hint-placeholder-count="4">
+            <div style="display:flex; align-items:center; gap:12px; padding:9px 0">
+              <span style="font-size:12.5px; font-weight:500; width:130px; flex:none">{{ m.name }}</span>
+              <div style="flex:1; height:8px; border-radius:5px; background:var(--bg); overflow:hidden"><div style="height:100%; border-radius:5px; width:{{ m.width }}; background:{{ m.color }}"></div></div>
+              <span style="font-size:11px; font-weight:600; color:{{ m.trendColor }}; width:46px; flex:none; text-align:right">{{ m.trend }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+      <section style="display:grid; grid-template-columns:1.2fr 1fr; gap:18px">
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px">
+          <div style="font-size:14px; font-weight:600; margin-bottom:4px">Opportunity forecast</div>
+          <div style="font-size:11.5px; color:var(--text-3); margin-bottom:12px">Timing windows LUMA predicts will peak</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+            <sc-for list="{{ forecast }}" as="f" hint-placeholder-count="4">
+              <div style="background:var(--panel-2); border:1px solid var(--border); border-radius:11px; padding:13px"><div style="font-size:10px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:.05em">{{ f.window }}</div><div style="font-size:12.5px; font-weight:600; line-height:1.4; margin-top:5px">{{ f.title }}</div><div style="font-size:11px; color:var(--text-2); margin-top:4px">{{ f.note }}</div></div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:var(--ink); border-radius:16px; padding:22px; display:flex; flex-direction:column; color:#fff">
+          <div style="width:38px; height:38px; border-radius:10px; background:rgba(255,255,255,.12); display:grid; place-items:center; margin-bottom:14px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M9 13h6"></path><path d="M9 17h4"></path></svg></div>
+          <div style="font-size:15px; font-weight:600">Weekly executive brief</div>
+          <div style="font-size:12.5px; color:rgba(255,255,255,.7); line-height:1.55; margin:6px 0 16px; flex:1">LUMA compiles brand health, risks, competitor moves and your next 3 PR opportunities into a 2-minute read — every Monday.</div>
+          <button onClick="{{ openLuma }}" style="height:40px; border:none; border-radius:10px; background:#fff; color:var(--ink); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer">Generate this week's brief</button>
+        </div>
+      </section>
+    </div>
+    </sc-if>
+
+    <!-- ====== AGENT MARKETPLACE ====== -->
+    <sc-if value="{{ isMarketplace }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Agent Marketplace" style="display:flex; flex-direction:column; gap:20px; animation:pageIn .35s ease">
+      <div><h1 style="font-size:22px; font-weight:600; letter-spacing:-0.025em; margin:0">Your AI brand team</h1><p style="font-size:13px; color:var(--text-2); margin:5px 0 0">Six specialized agents that operate as one connected intelligence network — replacing an entire PR &amp; brand agency.</p></div>
+      <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:18px">
+        <sc-for list="{{ agentsFull }}" as="a" hint-placeholder-count="6">
+          <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:20px 22px; display:flex; flex-direction:column">
+            <div style="display:flex; align-items:flex-start; gap:13px; margin-bottom:13px">
+              <div style="width:46px; height:46px; border-radius:12px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center; flex:none">{{ a.iconLg }}</div>
+              <div style="flex:1; min-width:0"><div style="display:flex; align-items:center; gap:9px"><span style="font-size:16px; font-weight:700; letter-spacing:0.01em">{{ a.name }}</span><span style="display:inline-flex; align-items:center; gap:5px; padding:3px 8px; border-radius:6px; background:{{ a.pillBg }}; color:{{ a.pillText }}; font-size:10.5px; font-weight:600"><span style="width:5px; height:5px; border-radius:50%; background:{{ a.dot }}"></span>{{ a.status }}</span></div><div style="font-size:12px; color:var(--text-3); margin-top:2px">{{ a.role }}</div></div>
+            </div>
+            <div style="font-size:12.5px; color:var(--text-2); line-height:1.5; margin-bottom:13px">{{ a.tagline }}</div>
+            <div style="display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px">
+              <sc-for list="{{ a.caps }}" as="cap" hint-placeholder-count="4">
+                <span style="font-size:11px; font-weight:500; color:var(--text-2); background:var(--panel-2); border:1px solid var(--border); padding:4px 9px; border-radius:7px">{{ cap }}</span>
+              </sc-for>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:var(--panel-2); border:1px solid var(--border); border-radius:10px; margin-bottom:15px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 3 18h12l3-18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg><span style="font-size:11.5px; color:var(--text-2)">Replaces: <b style="color:var(--text); font-weight:600">{{ a.replaces }}</b></span></div>
+            <div style="display:flex; gap:9px; margin-top:auto">
+              <button onClick="{{ a.openChat }}" style="flex:1; height:38px; border:none; border-radius:10px; background:var(--ink); color:var(--ink-fg); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px" style-hover="opacity:.9"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>Chat</button>
+              <button onClick="{{ a.toggle }}" style="flex:1; height:38px; border:1px solid {{ a.deployBorder }}; border-radius:10px; background:{{ a.deployBg }}; color:{{ a.deployColor }}; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer">{{ a.deployLabel }}</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ====== SETTINGS ====== -->
+    <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Settings" style="display:flex; flex-direction:column; gap:20px; animation:pageIn .35s ease; max-width:880px">
+      <div><h1 style="font-size:22px; font-weight:600; letter-spacing:-0.025em; margin:0">Settings</h1><p style="font-size:13px; color:var(--text-2); margin:5px 0 0">The brand context your agents learn from — the better this is, the sharper every output.</p></div>
+      <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:22px">
+        <div style="font-size:14px; font-weight:600; margin-bottom:16px">Brand profile</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+          <sc-for list="{{ brandFields }}" as="f" hint-placeholder-count="4">
+            <div><div style="font-size:11px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px">{{ f.label }}</div><div style="height:42px; display:flex; align-items:center; padding:0 13px; background:var(--bg); border:1px solid var(--border); border-radius:10px; font-size:13px; color:var(--text)">{{ f.value }}</div></div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:22px">
+        <div style="font-size:14px; font-weight:600; margin-bottom:4px">Connected platforms</div>
+        <div style="font-size:11.5px; color:var(--text-3); margin-bottom:8px">Where ECHO monitors and IVY distributes</div>
+        <sc-for list="{{ platforms }}" as="p" hint-placeholder-count="4">
+          <div style="display:flex; align-items:center; gap:13px; padding:13px 0; border-top:1px solid var(--border)">
+            <div style="width:36px; height:36px; border-radius:9px; background:var(--panel-2); border:1px solid var(--border); display:grid; place-items:center; font-size:12px; font-weight:700; color:var(--text-2); flex:none">{{ p.mono }}</div>
+            <div style="flex:1"><div style="font-size:13px; font-weight:600">{{ p.name }}</div><div style="font-size:11.5px; color:var(--text-3)">{{ p.handle }}</div></div>
+            <span style="font-size:11px; font-weight:600; color:{{ p.color }}; background:{{ p.bg }}; padding:4px 10px; border-radius:7px">{{ p.state }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 2px var(--shadow); padding:22px">
+        <div style="font-size:14px; font-weight:600; margin-bottom:12px">Voice &amp; tone</div>
+        <div style="display:flex; flex-wrap:wrap; gap:9px">
+          <sc-for list="{{ voiceTags }}" as="v" hint-placeholder-count="5">
+            <span style="font-size:12px; font-weight:500; color:{{ v.on }}; background:{{ v.bg }}; border:1px solid {{ v.border }}; padding:7px 13px; border-radius:9px">{{ v.label }}</span>
+          </sc-for>
+        </div>
+        <div style="font-size:11.5px; color:var(--text-3); margin-top:13px; line-height:1.5">AURA calibrates to this voice on every post. The system learns from your edits over time — accuracy improves with use.</div>
+      </div>
+    </div>
+    </sc-if>
+
+  </main>
+
+  <!-- ============ RIGHT RAIL: AGENT HUB ============ -->
+  <aside data-screen-label="Agent Hub" style="grid-area:rail; background:var(--panel); border-left:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden">
+    <div style="padding:18px 20px 14px; border-bottom:1px solid var(--border)">
+      <div style="display:flex; align-items:center; justify-content:space-between"><span style="font-size:15px; font-weight:600; letter-spacing:-0.015em">Agent Hub</span><div style="display:flex; align-items:center; gap:6px; padding:4px 9px; border-radius:7px; background:rgba(16,185,129,.12); color:#0f9b6c; font-size:11px; font-weight:600"><span style="width:6px; height:6px; border-radius:50%; background:#10b981; animation:blink 1.8s infinite"></span>{{ onlineCount }} online</div></div>
+      <div style="font-size:12px; color:var(--text-2); margin-top:5px; line-height:1.4">{{ hubSubtitle }}</div>
+    </div>
+    <div style="flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:11px">
+      <sc-for list="{{ agents }}" as="a" hint-placeholder-count="6">
+        <div style="border:1px solid {{ a.cardBorder }}; border-radius:14px; padding:14px; background:{{ a.cardBg }}; transition:border-color .15s, box-shadow .15s, transform .15s" style-hover="box-shadow:0 6px 18px var(--shadow); transform:translateY(-1px)">
+          <div style="display:flex; align-items:flex-start; gap:11px">
+            <div style="width:38px; height:38px; border-radius:10px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center; flex:none">{{ a.icon }}</div>
+            <div style="flex:1; min-width:0">
+              <div style="display:flex; align-items:center; gap:7px; flex-wrap:wrap"><span style="font-size:13.5px; font-weight:700; letter-spacing:0.01em">{{ a.name }}</span><span style="font-size:11px; color:var(--text-3)">{{ a.role }}</span>{{ a.focusTag }}</div>
+              <div style="display:inline-flex; align-items:center; gap:5px; margin-top:5px; padding:3px 8px; border-radius:6px; background:{{ a.pillBg }}; color:{{ a.pillText }}; font-size:10.5px; font-weight:600"><span style="width:5px; height:5px; border-radius:50%; background:{{ a.dot }}"></span>{{ a.status }}</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:var(--text-2); line-height:1.45; margin:11px 0 12px">{{ a.activity }}</div>
+          <button onClick="{{ a.openChat }}" style="display:flex; align-items:center; justify-content:center; gap:7px; width:100%; height:34px; border:1px solid var(--border); border-radius:9px; background:var(--panel); color:var(--text); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; transition:all .15s" style-hover="background:var(--ink); color:var(--ink-fg); border-color:var(--ink)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>Chat with {{ a.name }}</button>
+        </div>
+      </sc-for>
+      <button onClick="{{ openMarketplace }}" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; height:42px; border:1px dashed var(--border-strong); border-radius:12px; background:transparent; color:var(--text-2); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; transition:all .15s" style-hover="border-color:var(--accent); color:var(--accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Manage all agents</button>
+    </div>
+  </aside>
+
+  <!-- ============ CHAT DRAWER ============ -->
+  <sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; z-index:50; display:flex; justify-content:flex-end">
+      <div onClick="{{ closeDrawer }}" style="position:absolute; inset:0; background:rgba(8,10,16,.5); backdrop-filter:blur(3px); animation:ovIn .25s ease forwards"></div>
+      <div style="position:relative; width:440px; max-width:92vw; height:100%; background:var(--panel); border-left:1px solid var(--border); box-shadow:-12px 0 40px var(--shadow-lg); display:flex; flex-direction:column; animation:drawerIn .34s cubic-bezier(.34,.85,.4,1) forwards">
+        <div style="display:flex; align-items:center; gap:12px; padding:16px 18px; border-bottom:1px solid var(--border)">
+          <div style="width:42px; height:42px; border-radius:11px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center; flex:none">{{ drawerAgent.icon }}</div>
+          <div style="flex:1; min-width:0"><div style="display:flex; align-items:center; gap:8px"><span style="font-size:15px; font-weight:700; letter-spacing:0.01em">{{ drawerAgent.name }}</span><span style="display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:6px; background:{{ drawerAgent.pillBg }}; color:{{ drawerAgent.pillText }}; font-size:10.5px; font-weight:600"><span style="width:5px; height:5px; border-radius:50%; background:{{ drawerAgent.dot }}"></span>{{ drawerAgent.status }}</span></div><div style="font-size:12px; color:var(--text-2); margin-top:2px">{{ drawerAgent.role }} · {{ drawerAgent.tagline }}</div></div>
+          <button onClick="{{ closeDrawer }}" style="width:34px; height:34px; display:grid; place-items:center; border:1px solid var(--border); border-radius:9px; background:var(--panel); color:var(--text-2); cursor:pointer; flex:none" style-hover="background:var(--bg)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+        </div>
+        <div style="padding:12px 18px; border-bottom:1px solid var(--border); display:flex; gap:8px; flex-wrap:wrap; background:var(--panel-2)">
+          <sc-for list="{{ drawerAgent.quick }}" as="q" hint-placeholder-count="3">
+            <button onClick="{{ q.onClick }}" style="font-size:11.5px; font-weight:500; color:var(--text-2); background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:6px 11px; cursor:pointer; font-family:inherit" style-hover="border-color:var(--accent); color:var(--accent)">{{ q.label }}</button>
+          </sc-for>
+        </div>
+        <div style="flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:12px; background:var(--bg)">
+          <sc-for list="{{ messages }}" as="m" hint-placeholder-count="2">
+            <div style="display:flex; justify-content:{{ m.rowJustify }}"><div style="max-width:80%; padding:11px 14px; border-radius:14px; font-size:13px; line-height:1.5; background:{{ m.bubbleBg }}; color:{{ m.bubbleColor }}; border:1px solid {{ m.bubbleBorder }}; box-shadow:0 1px 2px var(--shadow); animation:floatUp .3s ease forwards">{{ m.text }}</div></div>
+          </sc-for>
+        </div>
+        <div style="padding:14px 16px; border-top:1px solid var(--border)">
+          <div style="display:flex; align-items:center; gap:9px; height:46px; padding:0 7px 0 14px; background:var(--bg); border:1px solid var(--border); border-radius:12px; transition:border-color .15s" style-focus-within="border-color:var(--accent)">
+            <input value="{{ chatInput }}" onChange="{{ setChatInput }}" onKeyDown="{{ onChatKey }}" placeholder="Message {{ drawerAgent.name }}…" style="flex:1; border:none; background:transparent; outline:none; font-size:13px; color:var(--text); font-family:inherit"/>
+            <button onClick="{{ sendChat }}" style="width:34px; height:34px; display:grid; place-items:center; border:none; border-radius:9px; background:var(--ink); color:var(--ink-fg); cursor:pointer; flex:none" style-hover="opacity:.9"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"></path><path d="M22 2 11 13"></path></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { theme:'light', page:'dashboard', drawerAgent:null, command:'', chatInput:'', chats:{}, crisis:false,
+            deployed:{fluent:true,navi:true,echo:true,aura:true,ivy:true,luma:false} };
+
+  _p(d){ return React.createElement('path',{d}); }
+  _c(cx,cy,r){ return React.createElement('circle',{cx,cy,r}); }
+  _svg(parts,size){ return React.createElement('svg',{width:size||20,height:size||20,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:1.75,strokeLinecap:'round',strokeLinejoin:'round'}, parts.map((p,i)=>React.cloneElement(p,{key:i}))); }
+  _logo(){ return React.createElement('svg',{width:22,height:22,viewBox:'0 0 24 24',fill:'currentColor'},[
+    React.createElement('rect',{key:0,x:3,y:2,width:6,height:20,rx:3}),
+    React.createElement('rect',{key:1,x:11,y:2,width:6,height:6,rx:2.3}),
+    React.createElement('rect',{key:2,x:11,y:10,width:6,height:12,rx:3})
+  ]); }
+
+  ICONS = {
+    fluent:[['m3 11 18-5v12L3 14v-3z'],['M11.6 16.8a3 3 0 1 1-5.8-1.6']],
+    navi:[['c',12,12,10],['m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z']],
+    echo:[['c',12,12,2],['M4.93 19.07a10 10 0 0 1 0-14.14'],['M7.76 16.24a6 6 0 0 1 0-8.48'],['M16.24 7.76a6 6 0 0 1 0 8.48'],['M19.07 4.93a10 10 0 0 1 0 14.14']],
+    aura:[['M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z'],['M19 15l.7 1.9L21.5 18l-1.8.7L19 21l-.7-1.9L16.5 18l1.8-.7z']],
+    ivy:[['M17 2l4 4-4 4'],['M3 11v-1a4 4 0 0 1 4-4h14'],['M7 22l-4-4 4-4'],['M21 13v1a4 4 0 0 1-4 4H3']],
+    luma:[['M15 14c.2-1 .7-1.7 1.5-2.5a6 6 0 1 0-9 0c.8.8 1.3 1.5 1.5 2.5'],['M9 18h6'],['M10 22h4']]
+  };
+  _agentIcon(id,size){ const parts=this.ICONS[id].map(a=> a[0]==='c'?this._c(a[1],a[2],a[3]):this._p(a[0])); return this._svg(parts,size||20); }
+
+  SEED = {
+    fluent:"FLUENT here — your communication strategist. I have a Series A press release drafted and 4 journalist pitches queued. Want me to personalize each pitch before they go out?",
+    navi:"NAVI online — your brand strategist. Your positioning and messaging system v3 is aligned across teams. I can map a competitor's narrative or refine a pillar whenever you're ready.",
+    echo:"ECHO active — your media radar. 142 mentions this week, sentiment trending up. I've spotted a rising trend you could own. Want the briefing?",
+    aura:"AURA here — your leadership branding engine. I've drafted 5 thought-leadership posts in your voice for this week. Want to review the strongest angle first?",
+    ivy:"IVY ready — your automation engine. I can turn any single post into 10 platform-ready assets and schedule the whole week. What should I repurpose first?",
+    luma:"LUMA online — your intelligence layer. Brand health is 84 and climbing, with 1 low-level risk flagged. I can generate your executive brief or forecast the next PR window."
+  };
+  REPLIES = {
+    fluent:["On it — I'll tailor each pitch to the outlet's beat and queue them for your approval.","Drafting now in PR-ready format. I'll keep the tone executive-grade and embargo until Tuesday.","Done. I've aligned the messaging with NAVI's narrative so it stays consistent everywhere."],
+    navi:["Here's the move: own the 'founder-led intelligence' white-space — no competitor holds it yet.","I've mapped their narrative. They lean on 'automation'; you should counter with 'authority'.","Updated the messaging pillar. I'll push the change to FLUENT so all comms stay aligned."],
+    echo:["Trending around you: 'AI governance' and 'founder-led growth'. I'd amplify within 48 hours.","Mentions are up 12% — mostly positive. I'll flag the moment anything turns negative.","I found a journalist actively covering your category. Want me to hand this to FLUENT to pitch?"],
+    aura:["The strongest angle is a contrarian take on hiring. Want the full draft in your voice?","I'll keep it to your rhythm — short sentences, a strong POV, no AI fluff.","Scheduled. IVY will repurpose it into a thread and a newsletter section automatically."],
+    ivy:["Repurposing into LinkedIn, X thread, newsletter, carousel and a reel script — 10 assets total.","I'll stagger posting across time zones for maximum reach. Want me to apply the weekly cycle?","Done. Everything's in the asset library, tagged and scheduled across platforms."],
+    luma:["Your executive brief is ready: health 84 (+6), 1 risk, 3 opportunities. Want the highlights?","I'm forecasting a visibility window in ~9 days around your category — prep content now.","Competitor momentum shifted: one rival is losing ground. Good moment to push your narrative."]
+  };
+
+  toggleTheme = () => this.setState(s=>({theme:s.theme==='light'?'dark':'light'}));
+  setPage = (id) => this.setState({page:id});
+  openMarketplace = () => this.setState({page:'marketplace'});
+  openHealth = () => this.setState({page:'health'});
+  openMonitor = () => this.setState({page:'monitor'});
+  toggleCrisis = () => this.setState(s=>({crisis:!s.crisis}));
+  toggleDeploy = (id) => this.setState(s=>({deployed:{...s.deployed,[id]:!s.deployed[id]}}));
+  closeDrawer = () => this.setState({drawerAgent:null});
+  setCommand = (e) => this.setState({command:e.target.value});
+  setChatInput = (e) => this.setState({chatInput:e.target.value});
+  onCommandKey = (e) => { if(e.key==='Enter') this.sendCommand(); };
+  onChatKey = (e) => { if(e.key==='Enter') this.sendChat(); };
+
+  openDrawer = (id) => this.setState(s=>{ const chats={...s.chats}; if(!chats[id]) chats[id]=[{role:'agent',text:this.SEED[id]}]; return {drawerAgent:id, chats}; });
+  _reply(id){ setTimeout(()=>this.setState(s=>{ const cur=s.chats[id]||[]; const n=cur.filter(m=>m.role==='user').length; const pool=this.REPLIES[id]||['Got it.']; return {chats:{...s.chats,[id]:[...cur,{role:'agent',text:pool[(n-1+pool.length)%pool.length]}]}}; }),650); }
+  sendChat = () => { const t=(this.state.chatInput||'').trim(); const id=this.state.drawerAgent; if(!t||!id) return; this.setState(s=>({chats:{...s.chats,[id]:[...(s.chats[id]||[]),{role:'user',text:t}]}, chatInput:''})); this._reply(id); };
+  sendCommand = () => { const t=(this.state.command||'').trim(); if(!t) return; const id='fluent'; this.setState(s=>{ const chats={...s.chats}; const cur=chats[id]||[{role:'agent',text:this.SEED[id]}]; chats[id]=[...cur,{role:'user',text:t}]; return {chats, drawerAgent:id, command:''}; }); this._reply(id); };
+  _quickSend = (id,text) => { this.openDrawer(id); setTimeout(()=>{ this.setState(s=>({chats:{...s.chats,[id]:[...(s.chats[id]||[]),{role:'user',text}]}})); this._reply(id); },20); };
+
+  _nav(arr){ return arr.map(i=>{ const on=this.state.page===i.id; return {...i, onClick:()=>this.setPage(i.id), bg:on?'var(--accent-soft)':'transparent', color:on?'var(--accent)':'var(--text-2)', iconColor:on?'var(--accent)':'var(--text-3)', weight:on?'600':'500'}; }); }
+
+  _banner(id,name,tagline){
+    const open=()=>this.openDrawer(id);
+    return React.createElement('div',{style:{display:'flex',alignItems:'center',gap:'13px',background:'var(--panel)',border:'1px solid var(--border)',borderRadius:'14px',boxShadow:'0 1px 2px var(--shadow)',padding:'14px 18px'}},
+      React.createElement('div',{key:'i',style:{width:'40px',height:'40px',borderRadius:'11px',background:'var(--accent-soft)',color:'var(--accent)',display:'grid',placeItems:'center',flex:'none'}}, this._agentIcon(id,20)),
+      React.createElement('div',{key:'t',style:{flex:1,minWidth:0}},
+        React.createElement('div',{style:{fontSize:'13px',fontWeight:600}}, 'Powered by '+name),
+        React.createElement('div',{style:{fontSize:'12px',color:'var(--text-2)',marginTop:'1px'}}, tagline)),
+      React.createElement('button',{key:'b',onClick:open,style:{display:'inline-flex',alignItems:'center',gap:'7px',height:'34px',padding:'0 14px',border:'1px solid var(--border)',borderRadius:'9px',background:'var(--panel)',color:'var(--text)',fontFamily:'inherit',fontSize:'12.5px',fontWeight:600,cursor:'pointer'}}, 'Chat with '+name)
+    );
+  }
+
+  renderVals(){
+    const page=this.state.page, isDark=this.state.theme==='dark';
+    const navMain=this._nav([
+      {id:'dashboard',label:'Dashboard',icon:this._svg([this._p('M3 3h7v8H3z'),this._p('M14 3h7v5h-7z'),this._p('M14 12h7v9h-7z'),this._p('M3 15h7v6H3z')],17)},
+      {id:'strategy',label:'Brand Strategy',icon:this._agentIcon('navi',17)},
+      {id:'pr',label:'PR Center',icon:this._agentIcon('fluent',17)},
+      {id:'content',label:'Content Studio',icon:this._svg([this._p('M12 19l7-7 3 3-7 7-3-3z'),this._p('M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z'),this._p('m2 2 7.6 7.6'),this._c(11,11,2)],17)},
+      {id:'marketplace',label:'Agent Marketplace',icon:this._svg([this._p('M12 8V4H8'),React.createElement('rect',{x:4,y:8,width:16,height:12,rx:2}),this._p('M2 14h2'),this._p('M20 14h2'),this._p('M15 13v2'),this._p('M9 13v2')],17)}
+    ]);
+    const navIntel=this._nav([
+      {id:'monitor',label:'Media Monitor',icon:this._svg([this._p('M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z'),this._c(12,12,3)],17)},
+      {id:'health',label:'Brand Health',icon:this._svg([this._p('M22 12h-4l-3 9L9 3l-3 9H2')],17)}
+    ]);
+    const navSettings=this._nav([{id:'settings',label:'Settings',icon:this._svg([this._c(12,12,3),this._p('M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 14H4.5a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 6 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 10 4.6V4.5a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 10h.1a2 2 0 1 1 0 4h-.1z')],17)}])[0];
+
+    const meta={
+      dashboard:{crumb:'Workspace',title:'Dashboard'}, strategy:{crumb:'Workspace',title:'Brand Strategy'},
+      pr:{crumb:'Workspace',title:'PR Center'}, content:{crumb:'Workspace',title:'Content Studio'},
+      marketplace:{crumb:'Workspace',title:'Agent Marketplace'}, monitor:{crumb:'Intelligence',title:'Media Monitor'},
+      health:{crumb:'Intelligence',title:'Brand Health'}, settings:{crumb:'Account',title:'Settings'}
+    }[page];
+
+    const tone={ emerald:{dot:'#10b981',pillBg:'rgba(16,185,129,.13)',pillText:'#0f9b6c'}, blue:{dot:'#3b82f6',pillBg:'rgba(59,130,246,.13)',pillText:'#2f72e0'}, violet:{dot:'#7c5cff',pillBg:'rgba(124,92,255,.15)',pillText:'#7c5cff'}, amber:{dot:'#f59e0b',pillBg:'rgba(245,158,11,.15)',pillText:'#c47d12'} };
+    const focusMap={strategy:'navi',pr:'fluent',content:'aura',monitor:'echo',health:'luma'};
+    const focusId=focusMap[page];
+    const base=[
+      {id:'fluent',name:'FLUENT',role:'PR & Comms',status:'Ready',toneK:'emerald',activity:'1 press release drafted · 4 pitches queued for review',tagline:'AI communication strategist for press, pitches & crisis.',replaces:'Slow agency turnaround',caps:['Press releases','Media pitches','Crisis comms','Messaging frameworks']},
+      {id:'navi',name:'NAVI',role:'Brand Strategy',status:'Ready',toneK:'emerald',activity:'Messaging system v3 aligned across all teams',tagline:'AI brand strategist for positioning & differentiation.',replaces:'Weeks of strategy workshops',caps:['Positioning','Messaging','Personas','White-space']},
+      {id:'echo',name:'ECHO',role:'Media & Reach',status:'Active',toneK:'violet',activity:'Tracking 142 mentions across 38 keywords in real time',tagline:'Real-time media monitoring & amplification engine.',replaces:'Manual media monitoring',caps:['Mention monitoring','Sentiment','Trend detection','Benchmarking']},
+      {id:'aura',name:'AURA',role:'Leadership Brand',status:'Drafting',toneK:'amber',activity:'5 thought-leadership posts drafted in your voice',tagline:'Leadership authority engine for LinkedIn & TL content.',replaces:'Ghostwriters & inconsistency',caps:['Leadership narrative','LinkedIn engine','Tone calibration','Speaking radar']},
+      {id:'ivy',name:'IVY',role:'Automation',status:'Active',toneK:'violet',activity:'Repurposing 1→10 · 24 posts scheduled this week',tagline:'Automation engine for repurposing & distribution.',replaces:'Manual repurposing ops',caps:['1→10 repurposing','Scheduling','Campaign automation','Asset library']},
+      {id:'luma',name:'LUMA',role:'Intelligence',status:'Monitoring',toneK:'blue',activity:'Brand health 84 · 1 low-level risk flagged',tagline:'Insight & forecasting for brand health & risk.',replaces:'Manual reports & guesswork',caps:['Health dashboards','Risk alerts','Forecasting','Exec briefs']}
+    ];
+    const agents=base.map(a=>{ const t=tone[a.toneK]; const focus=a.id===focusId; return {...a, ...t, icon:this._agentIcon(a.id,20), openChat:()=>this.openDrawer(a.id),
+      cardBorder:focus?'var(--accent)':'var(--border)', cardBg:focus?'var(--accent-soft)':'var(--panel-2)',
+      focusTag: focus?React.createElement('span',{style:{fontSize:'9.5px',fontWeight:600,color:'var(--accent)',background:'var(--panel)',border:'1px solid var(--accent)',padding:'1px 6px',borderRadius:'5px'}},'On this page'):'' }; });
+
+    const agentsFull=base.map(a=>{ const t=tone[a.toneK]; const dep=this.state.deployed[a.id]; return {...a, ...t, iconLg:this._agentIcon(a.id,24), openChat:()=>this.openDrawer(a.id), toggle:()=>this.toggleDeploy(a.id),
+      deployLabel:dep?'Deployed':'Deploy', deployBg:dep?'var(--accent-soft)':'var(--panel)', deployColor:dep?'var(--accent)':'var(--text)', deployBorder:dep?'var(--accent-soft)':'var(--border)' }; });
+
+    const drawerId=this.state.drawerAgent;
+    const drawerBase=base.find(a=>a.id===drawerId);
+    const quickMap={
+      fluent:['Draft a press release','Write 3 journalist pitches','Activate crisis mode'],
+      navi:['Map a competitor','Refine my positioning','Build a persona'],
+      echo:['Show rising trends','Find PR opportunities','Check my sentiment'],
+      aura:['Draft this week\u2019s posts','Find speaking slots','Calibrate my tone'],
+      ivy:['Repurpose my last post','Schedule the week','Build a campaign'],
+      luma:['Generate exec brief','Forecast next window','Run a risk scan']
+    };
+    const drawerAgent=drawerBase?{...drawerBase, ...tone[drawerBase.toneK], icon:this._agentIcon(drawerBase.id,22), quick:(quickMap[drawerBase.id]||[]).map(l=>({label:l,onClick:()=>this._quickSend(drawerBase.id,l)}))}:null;
+    const messages=(this.state.chats[drawerId]||[]).map(m=>({...m, rowJustify:m.role==='user'?'flex-end':'flex-start', bubbleBg:m.role==='user'?'var(--ink)':'var(--panel)', bubbleColor:m.role==='user'?'var(--ink-fg)':'var(--text)', bubbleBorder:m.role==='user'?'var(--ink)':'var(--border)'}));
+
+    const themeIcon=isDark
+      ? this._svg([this._c(12,12,4),this._p('M12 2v2'),this._p('M12 20v2'),this._p('m4.9 4.9 1.4 1.4'),this._p('m17.7 17.7 1.4 1.4'),this._p('M2 12h2'),this._p('M20 12h2'),this._p('m6.3 17.7-1.4 1.4'),this._p('m19.1 4.9-1.4 1.4')],17)
+      : this._svg([this._p('M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z')],17);
+
+    const mi=(parts)=>this._svg(parts,16);
+    const metrics=[
+      {label:'Media Mentions',value:'142',delta:'+12%',note:'this week',agent:'ECHO',icon:mi([this._p('m3 11 18-5v12L3 14v-3z'),this._p('M11.6 16.8a3 3 0 1 1-5.8-1.6')])},
+      {label:'Net Sentiment',value:'+84%',delta:'Positive',note:'14-day avg',agent:'ECHO',icon:mi([this._c(12,12,10),this._p('M8 14s1.5 2 4 2 4-2 4-2'),this._p('M9 9h.01'),this._p('M15 9h.01')])},
+      {label:'Share of Voice',value:'23%',delta:'+3 pts',note:'vs category',agent:'LUMA',icon:mi([this._p('M3 3v18h18'),this._p('M7 16v-5'),this._p('M12 16V8'),this._p('M17 16v-9')])}
+    ];
+    const af=(parts)=>this._svg(parts,15);
+    const activity=[
+      {agent:'FLUENT',text:'drafted "Series A — $14M" press release & 4 pitches.',time:'12 min ago',icon:af(this.ICONS.fluent.map(a=>this._p(a[0])))},
+      {agent:'ECHO',text:'flagged a rising trend: "AI governance" (+38%).',time:'40 min ago',icon:af(this.ICONS.echo.map(a=>a[0]==='c'?this._c(a[1],a[2],a[3]):this._p(a[0])))},
+      {agent:'AURA',text:'scheduled 3 LinkedIn thought-leadership posts.',time:'1 hr ago',icon:af(this.ICONS.aura.map(a=>this._p(a[0])))},
+      {agent:'IVY',text:'repurposed 1 post → 9 multi-platform assets.',time:'3 hr ago',icon:af(this.ICONS.ivy.map(a=>this._p(a[0])))},
+      {agent:'LUMA',text:'compiled your weekly executive brief.',time:'5 hr ago',icon:af(this.ICONS.luma.map(a=>this._p(a[0])))}
+    ];
+
+    const chipI=(parts)=>this._svg(parts,14);
+    const chips=[
+      {label:'Draft a funding announcement',icon:chipI([this._p('m3 11 18-5v12L3 14v-3z')])},
+      {label:'Summarize this week\u2019s coverage',icon:chipI([this._p('M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'),this._p('M14 2v6h6')])},
+      {label:'Find journalists to pitch',icon:chipI([this._c(11,11,8),this._p('m21 21-4.3-4.3')])}
+    ].map(c=>({...c,onClick:()=>this.setState({command:c.label})}));
+
+    const sb=(p)=>({deltaColor:'#0f9b6c',deltaBg:'rgba(16,185,129,.12)',...p});
+    const breakdown=[{label:'Visibility',value:'82',delta:'+5',width:'82%'},{label:'Credibility',value:'76',delta:'+4',width:'76%'},{label:'Engagement',value:'71',delta:'+9',width:'71%'},{label:'Sentiment',value:'88',delta:'+2',width:'88%'}];
+    const replaced=[{value:'8',label:'Press assets written'},{value:'32',label:'Posts scheduled'},{value:'142',label:'Mentions tracked'},{value:'$18k',label:'Agency spend saved'}];
+    const mentions=[
+      {mono:'TC',outlet:'TechCrunch',time:'2h',headline:'Influence OS raises $14M to redefine founder-led PR',sentiment:'Positive',badgeBg:'rgba(16,185,129,.13)',badgeText:'#0f9b6c'},
+      {mono:'Fo',outlet:'Forbes',time:'1d',headline:'The rise of AI-native communications teams',sentiment:'Neutral',badgeBg:'var(--bg)',badgeText:'var(--text-2)'},
+      {mono:'YS',outlet:'YourStory',time:'2d',headline:'How founders automate their thought leadership',sentiment:'Positive',badgeBg:'rgba(16,185,129,.13)',badgeText:'#0f9b6c'}
+    ];
+
+    // NAVI
+    const naviStats=[sb({label:'Messaging Clarity',value:'86',delta:'+7'}),sb({label:'Differentiation',value:'79',delta:'+5'}),sb({label:'Internal Consistency',value:'91',delta:'+3'}),{label:'Narrative Overlap',value:'22%',delta:'−6',deltaColor:'#0f9b6c',deltaBg:'rgba(16,185,129,.12)'}];
+    const pillars=[{title:'Intelligence over output',desc:'Not an AI writer — a full brand intelligence system that thinks strategically.'},{title:'Founder-led authority',desc:'Built for leaders who turn expertise into market influence, not generic content.'},{title:'One connected network',desc:'Six agents that share context — strategy flows into PR, content and insight.'}];
+    const personas=[{initials:'GF',name:'Growth-stage Founder',desc:'Series A–C. Needs visibility & narrative control without hiring an agency.',c1:'#6366f1',c2:'#a855f7'},{initials:'CX',name:'CXO / Comms Lead',desc:'Wants executive-grade messaging delivered fast and consistently.',c1:'#0ea5e9',c2:'#6366f1'},{initials:'AG',name:'Boutique Agency',desc:'Scales client delivery with white-label AI across many brands.',c1:'#f59e0b',c2:'#ef4444'}];
+    const competitors=[{name:'Legacy PR agency',width:'42%',color:'var(--border-strong)',note:'High cost'},{name:'AI writing tools',width:'30%',color:'var(--border-strong)',note:'Shallow'},{name:'Social listening',width:'48%',color:'var(--border-strong)',note:'No strategy'},{name:'Influence OS',width:'88%',color:'linear-gradient(90deg,var(--accent),var(--accent-2))',note:'White-space'}];
+
+    // FLUENT
+    const fluentStats=[sb({label:'PR Output Velocity',value:'8.4×'}),sb({label:'Consistency Score',value:'94'}),sb({label:'Tone Accuracy',value:'91%'}),sb({label:'Response Time',value:'−87%'})];
+    const tagB={Drafting:{tagBg:'rgba(245,158,11,.14)',tagColor:'#c47d12'},Review:{tagBg:'rgba(59,130,246,.13)',tagColor:'#2f72e0'},Ready:{tagBg:'rgba(16,185,129,.13)',tagColor:'#0f9b6c'},Live:{tagBg:'var(--accent-soft)',tagColor:'var(--accent)'}};
+    const mkItem=(title,tag)=>({title,tag,...tagB[tag]});
+    const pipeline=[
+      {stage:'Drafting',count:'2',items:[mkItem('Product launch — v2 platform','Drafting'),mkItem('Partnership: regional media','Drafting')]},
+      {stage:'In Review',count:'2',items:[mkItem('Series A — $14M announcement','Review'),mkItem('Founder op-ed: AI & PR','Review')]},
+      {stage:'Ready',count:'1',items:[mkItem('Hiring: VP Engineering','Ready')]},
+      {stage:'Published',count:'2',items:[mkItem('UAE market expansion','Live'),mkItem('Award: Top 10 SaaS','Live')]}
+    ];
+    const ft=(parts)=>this._svg(parts,17);
+    const fluentTools=[
+      {title:'Press Release Composer',desc:'Launches, funding, partnerships — any format.',icon:ft([this._p('M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'),this._p('M14 2v6h6')]),id:'fluent'},
+      {title:'PR Pitch Engine',desc:'Personalized, journalist-specific outreach.',icon:ft([this._p('m22 2-7 20-4-9-9-4z'),this._p('M22 2 11 13')]),id:'fluent'},
+      {title:'Messaging Library',desc:'Talking points, FAQs & approved quotes.',icon:ft([this._p('M4 19.5A2.5 2.5 0 0 1 6.5 17H20'),this._p('M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z')]),id:'fluent'},
+      {title:'Stakeholder Notes',desc:'Investor, customer & internal updates.',icon:ft([this._p('M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'),this._c(9,7,4),this._p('M23 21v-2a4 4 0 0 0-3-3.87')]),id:'fluent'}
+    ].map(t=>({...t}));
+    const crisis=this.state.crisis;
+
+    // CONTENT
+    const contentStats=[sb({label:'Authority Score',value:'78',delta:'+6'}),sb({label:'Content Velocity',value:'5.2×'}),sb({label:'Visibility Momentum',value:'+34%'}),sb({label:'Posts Scheduled',value:'24'})];
+    const calA={LinkedIn:'#0a66c2',X:'#111827','Newsletter':'#7c3aed',Reel:'#ef4444'};
+    const cp=(platform,title,status,statusColor)=>({platform,title,status,statusColor,accent:calA[platform]||'var(--accent)'});
+    const calendar=[
+      {day:'Mon',posts:[cp('LinkedIn','Why founders must own their narrative','Scheduled','#0f9b6c')]},
+      {day:'Tue',posts:[cp('X','Thread: 5 PR myths','Drafting','#c47d12')]},
+      {day:'Wed',posts:[cp('LinkedIn','The agency model is breaking','Scheduled','#0f9b6c'),cp('Newsletter','Weekly insight','Drafting','#c47d12')]},
+      {day:'Thu',posts:[cp('Reel','60s: build authority','Idea','var(--text-3)')]},
+      {day:'Fri',posts:[cp('LinkedIn','Behind our Series A','Scheduled','#0f9b6c')]}
+    ];
+    const tlPillars=[{pct:'38%',title:'Founder-led growth',note:'Your core authority theme'},{pct:'27%',title:'Future of PR & AI',note:'Category POV'},{pct:'20%',title:'Building in public',note:'Trust & transparency'},{pct:'15%',title:'Leadership & hiring',note:'Human angle'}];
+    const ri=(parts)=>this._svg(parts,15);
+    const repurpose=[
+      {fmt:'LinkedIn post',count:'Ready',icon:ri([React.createElement('rect',{x:2,y:2,width:20,height:20,rx:3}),this._p('M8 11v5'),this._p('M8 8v.01'),this._p('M12 16v-3a2 2 0 0 1 4 0v3')])},
+      {fmt:'X thread',count:'8 tweets',icon:ri([this._p('M18 6 6 18'),this._p('M8 6h10v10')])},
+      {fmt:'Newsletter',count:'1 section',icon:ri([this._p('M4 4h16v16H4z'),this._p('m4 7 8 5 8-5')])},
+      {fmt:'Carousel',count:'6 slides',icon:ri([React.createElement('rect',{x:3,y:5,width:14,height:14,rx:2}),this._p('M21 7v10')])},
+      {fmt:'Reel script',count:'45s',icon:ri([this._p('m22 8-6 4 6 4V8z'),React.createElement('rect',{x:2,y:6,width:14,height:12,rx:2})])},
+      {fmt:'Blog section',count:'600 words',icon:ri([this._p('M4 19.5A2.5 2.5 0 0 1 6.5 17H20'),this._p('M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z')])}
+    ];
+
+    // ECHO
+    const echoStats=[sb({label:'Brand Mentions',value:'142',delta:'+12%'}),sb({label:'Sentiment Score',value:'84',delta:'+4'}),sb({label:'Share of Voice',value:'23%',delta:'+3'}),{label:'Reputation Risk',value:'Low',delta:'Stable',deltaColor:'#0f9b6c',deltaBg:'rgba(16,185,129,.12)'}];
+    const trends=[{tag:'AI governance',width:'92%',delta:'+38%'},{tag:'Founder-led growth',width:'74%',delta:'+21%'},{tag:'PR automation',width:'61%',delta:'+17%'},{tag:'India SaaS funding',width:'48%',delta:'+9%'}];
+    const fa=(s,bg,bt)=>({sentiment:s,badgeBg:bg,badgeText:bt});
+    const feed=[
+      {mono:'TC',outlet:'TechCrunch',time:'2h',headline:'Influence OS raises $14M to redefine founder-led PR',action:'Amplify',...fa('Positive','rgba(16,185,129,.13)','#0f9b6c')},
+      {mono:'Re',outlet:'Reddit · r/startups',time:'5h',headline:'Anyone tried Influence OS? Curious about the agent model',action:'Respond',...fa('Neutral','var(--bg)','var(--text-2)')},
+      {mono:'X',outlet:'X · @saas_daily',time:'8h',headline:'The 6-agent approach is smart — most AI PR tools are shallow',action:'Amplify',...fa('Positive','rgba(16,185,129,.13)','#0f9b6c')},
+      {mono:'Bl',outlet:'Blog · MediaWatch',time:'1d',headline:'Is AI coming for the PR agency? A skeptical take',action:'Pitch',...fa('Risk','rgba(244,63,94,.12)','#e11d48')}
+    ];
+
+    // LUMA
+    const lumaStats=[{label:'Reputation Risk',value:'12',delta:'Low',deltaColor:'#0f9b6c',deltaBg:'rgba(16,185,129,.12)'},sb({label:'Trend Prediction',value:'High'}),sb({label:'Authority Growth',value:'+6/mo'}),sb({label:'Market Momentum',value:'1.4×'})];
+    const risks=[
+      {title:'Skeptical op-ed gaining traction',desc:'"Is AI coming for the PR agency?" — shared 40+ times. FLUENT can prep a measured response.',level:'Watch',dot:'#f59e0b',lvlColor:'#c47d12',lvlBg:'rgba(245,158,11,.14)'},
+      {title:'Competitor narrative overlap',desc:'A rival adopted "AI brand intelligence" language. NAVI suggests sharpening differentiation.',level:'Low',dot:'#3b82f6',lvlColor:'#2f72e0',lvlBg:'rgba(59,130,246,.12)'},
+      {title:'Sentiment stable & positive',desc:'No negative spikes detected across monitored platforms in 14 days.',level:'Clear',dot:'#10b981',lvlColor:'#0f9b6c',lvlBg:'rgba(16,185,129,.12)'}
+    ];
+    const momentum=[
+      {name:'Influence OS',width:'88%',color:'linear-gradient(90deg,var(--accent),var(--accent-2))',trend:'+14%',trendColor:'#0f9b6c'},
+      {name:'NarrativeAI',width:'62%',color:'var(--border-strong)',trend:'+6%',trendColor:'#0f9b6c'},
+      {name:'PR Genie',width:'54%',color:'var(--border-strong)',trend:'−3%',trendColor:'#e11d48'},
+      {name:'BrandPulse',width:'41%',color:'var(--border-strong)',trend:'+2%',trendColor:'#0f9b6c'}
+    ];
+    const forecast=[
+      {window:'~9 days',title:'AI governance news cycle peaks',note:'Prep a founder POV now'},
+      {window:'~2 weeks',title:'India SaaS funding season',note:'Time your Series A push'},
+      {window:'Ongoing',title:'Podcast guest demand rising',note:'AURA found 5 relevant shows'},
+      {window:'~3 weeks',title:'Competitor narrative fatigue',note:'Window to own the category'}
+    ];
+
+    // SETTINGS
+    const brandFields=[{label:'Brand name',value:'Influence OS'},{label:'Category',value:'AI Brand Intelligence'},{label:'Primary market',value:'India · UAE'},{label:'Stage',value:'Series A · Growth'}];
+    const platforms=[
+      {mono:'in',name:'LinkedIn',handle:'@elena-marsh · @influenceos',state:'Connected',color:'#0f9b6c',bg:'rgba(16,185,129,.12)'},
+      {mono:'X',name:'X (Twitter)',handle:'@influenceos',state:'Connected',color:'#0f9b6c',bg:'rgba(16,185,129,.12)'},
+      {mono:'Ig',name:'Instagram',handle:'@influence.os',state:'Connected',color:'#0f9b6c',bg:'rgba(16,185,129,.12)'},
+      {mono:'@',name:'Newsletter / Email',handle:'Not connected',state:'Connect',color:'var(--text-2)',bg:'var(--bg)'}
+    ];
+    const voiceOn=['Confident','Strategic','Warm','Founder-first'];
+    const voiceAll=['Confident','Strategic','Warm','Founder-first','Visionary','No-fluff','Witty','Formal'];
+    const voiceTags=voiceAll.map(l=>{ const on=voiceOn.includes(l); return {label:l, on:on?'#fff':'var(--text-2)', bg:on?'var(--ink)':'var(--panel-2)', border:on?'var(--ink)':'var(--border)'}; });
+
+    return {
+      logoMark:this._logo(), theme:this.state.theme, themeIcon, toggleTheme:this.toggleTheme,
+      navMain, navIntel, navSettings,
+      pageCrumb:meta.crumb, pageTitle:meta.title,
+      isDashboard:page==='dashboard', isStrategy:page==='strategy', isPr:page==='pr', isContent:page==='content', isMonitor:page==='monitor', isHealth:page==='health', isMarketplace:page==='marketplace', isSettings:page==='settings',
+      openMarketplace:this.openMarketplace, openHealth:this.openHealth, openMonitor:this.openMonitor,
+      openNavi:()=>this.openDrawer('navi'), openFluent:()=>this.openDrawer('fluent'), openAura:()=>this.openDrawer('aura'), openIvy:()=>this.openDrawer('ivy'), openEcho:()=>this.openDrawer('echo'), openLuma:()=>this.openDrawer('luma'),
+      agents, agentsFull, onlineCount:Object.values(this.state.deployed).filter(Boolean).length,
+      hubSubtitle: focusId? ('Focused on '+meta.title+' · your full AI team stays on call.') : 'Your autonomous PR & brand team. Tap any agent to collaborate.',
+      command:this.state.command, setCommand:this.setCommand, onCommandKey:this.onCommandKey, sendCommand:this.sendCommand,
+      drawerOpen:!!drawerAgent, drawerAgent, messages, chatInput:this.state.chatInput, setChatInput:this.setChatInput, onChatKey:this.onChatKey, sendChat:this.sendChat, closeDrawer:this.closeDrawer,
+      metrics, breakdown, replaced, mentions, activity, chips,
+      banner_navi:this._banner('navi','NAVI','Your AI brand strategist — positioning, messaging & differentiation.'),
+      banner_fluent:this._banner('fluent','FLUENT','Your AI communication strategist — press, pitches & crisis.'),
+      banner_content:this._banner('aura','AURA + IVY','Thought leadership in your voice, repurposed & scheduled automatically.'),
+      banner_echo:this._banner('echo','ECHO','Real-time media monitoring, sentiment & amplification.'),
+      banner_luma:this._banner('luma','LUMA','Brand health, risk detection & opportunity forecasting.'),
+      naviStats, pillars, personas, competitors,
+      fluentStats, pipeline, fluentTools, crisis, toggleCrisis:this.toggleCrisis,
+      crisisBtnLabel:crisis?'Deactivate Crisis Mode':'Activate Crisis Mode', crisisBtnBg:crisis?'var(--panel)':'#e11d48', crisisBtnColor:crisis?'var(--text)':'#fff',
+      contentStats, calendar, tlPillars, repurpose,
+      echoStats, trends, feed,
+      lumaStats, risks, momentum, forecast,
+      brandFields, platforms, voiceTags
+    };
+  }
+}
+</script>
+</body>
+</html>
