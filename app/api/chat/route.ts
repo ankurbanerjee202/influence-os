@@ -34,7 +34,7 @@ Respond as ${agent.name} — stay in character, be concise (2–4 sentences), sp
 
   try {
     const chat = ai.chats.create({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.5-flash',
       config: { systemInstruction: systemPrompt },
       history,
     })
